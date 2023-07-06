@@ -1,4 +1,16 @@
 {
-    "sdk": "MoveApps R SDK",
-    "year": 2006
+    "timefilter": 5,
+    "bind_times": true,
+    "createUTMs": true,
+    "EPSG": 32733,
+    "bind_index": true,
+    "bind_kmph": true,
+    "bind_dist": true,
+    "bind_timediff": true,
+    "bind_study": true,
+    "idcol": null,
+    "altitudecol": "height_above_ellipsoid",
+    "tempcol": "eobs_temperature",
+    "headingcol": "heading",
+    "keepessentials": true
 }

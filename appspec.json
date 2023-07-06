@@ -1,41 +1,102 @@
 {
   "settings": [
     {
-      "id": "sdk",
-      "name": "The name of the MoveApps SDK",
-      "description": "Showcase requesting a string input from the users of your app.",
-      "defaultValue": "MoveApps SDK",
-      "type": "STRING"
-    },
-    {
-      "id": "year",
-      "name": "The year",
-      "description": "Insert description for the year setting setting",
-      "defaultValue": 2022,
+      "id": "timefilter",
+      "name": "Filter by Time Interval",
+      "description": "Determines the size of the interval (minutes) that the input data should be thinned too. Blank means no filtering takes place. NOTE: We do not recommend applying this for high-resolution datasets of duration greater than 1 month.",
+      "defaultValue": null,
       "type": "INTEGER"
     },
     {
-      "id": "yourLocalFileSettingId",
-      "name": "Personalization",
-      "description": "You can personalize the dashboard by providing a file named 'sample.txt'",
-      "type": "LOCAL_FILE"
-    }
-  ],
-  "dependencies": {
-    "R": [
-      {
-        "name": "lubridate"
-      },
-      {
-        "name": "move2"
-      }
-    ]
-  },
-  "createsArtifacts": true,
-  "providedAppFiles": [
+      "id": "bind_times",
+      "name": "Bind additional timestamp columns",
+      "description": "Determines whether or not to bind additional timestamp columns (hour, minute, seconds etc.) to the dataset.",
+      "defaultValue": true,
+      "type": "CHECKBOX"
+    },
     {
-      "settingId": "yourLocalFileSettingId",
-      "from": "data/local_app_files/provided-app-files/yourLocalFileSettingId/"
+      "id": "bind_index",
+      "name": "Bind index column",
+      "description": "Determines whether or not to bind an 'index' column consisting of ID and timestamp data.",
+      "defaultValue": true,
+      "type": "CHECKBOX"
+    },
+    {
+      "id": "bind_kmph",
+      "name": "Bind speed column",
+      "description": "Determines whether or not to bind a 'speed' column (units: km/h).",
+      "defaultValue": true,
+      "type": "CHECKBOX"
+    },
+    {
+      "id": "bind_dist",
+      "name": "Bind distance travelled column",
+      "description": "Determines whether or not to bind a 'distance travelled' column (units: metres).",
+      "defaultValue": true,
+      "type": "CHECKBOX"
+    },
+    {
+      "id": "createUTMs",
+      "name": "Bind UTM location data",
+      "description": "Determines whether or not to generate and append UTM (Universal Transverse Mercator) data.",
+      "defaultValue": true,
+      "type": "CHECKBOX"
+    },
+    {
+      "id": "EPSG",
+      "name": "Provide EPSG code for UTM coordinates",
+      "description": "Please provide a valid EPSG code if 'createUTMs' (above) is selected. Defaults to EPSG:32733.",
+      "defaultValue": 32733,
+      "type": "INTEGER"
+    },
+    {
+      "id": "bind_timediff",
+      "name": "Bind 'time difference' column",
+      "description": "Determines whether or not to bind a 'time difference' column (units: hours).",
+      "defaultValue": true,
+      "type": "CHECKBOX"
+    },
+    {
+      "id": "bind_study",
+      "name": "Bind 'study name' column",
+      "description": "Determines whether or not to bind a standardised study name column. Recommended if using several studies later in this workflow",
+      "defaultValue": true,
+      "type": "CHECKBOX"
+    },
+    {
+      "id": "idcol",
+      "name": "Name of index column",
+      "description": "Insert the name of the column to be used as primary identification. Blank means the default will be used. NOTE: Please replace periods (.) with underscores (_) in any provided names.",
+      "defaultValue": null,
+      "type": "STRING"
+    },
+    {
+      "id": "altitudecol",
+      "name": "Name of altitude column",
+      "description": "Insert the name of the column containing altitude data (if any). If left blank, an empty column is created. NOTE: Please replace periods (.) with underscores (_) in any provided names.",
+      "defaultValue": null,
+      "type": "STRING"
+    },
+    {
+      "id": "tempcol",
+      "name": "Name of temperature column",
+      "description": "Insert the name of the column containing temperature data in celsius (if any). If left blank, an empty column is created. NOTE: Please replace periods (.) with underscores (_) in any provided names.",
+      "defaultValue": null,
+      "type": "STRING"
+    },
+    {
+      "id": "headingcol",
+      "name": "Name of heading column",
+      "description": "Insert the name of the column containing heading data in degrees (if any). If left blank, an empty column is craeteed. NOTE: Please replace periods (.) with underscores (_) in any provided names.",
+      "defaultValue": null,
+      "type": "STRING"
+    },
+    {
+      "id": "keepessentials",
+      "name": "Keep only essential columns",
+      "description": "Determines whether or not keep only columns relevant to later steps of the cluster-detection workflow.",
+      "defaultValue": true,
+      "type": "CHECKBOX"
     }
   ],
   "license": {
@@ -48,34 +109,20 @@
   ],
   "people": [
     {
-      "firstName": "Charles",
-      "middleInitials": null,
-      "lastName": "Darwin",
-      "email": "creator@example.com",
+      "firstName": "Callum",
+      "middleInitials": "J.",
+      "lastName": "Clarke",
+      "email": "cjosephclarke@outlook.com",
       "roles": [
         "author",
         "creator"
       ],
       "orcid": null,
-      "affiliation": null,
+      "affiliation": "University of St Andrews",
       "affiliationRor": null
     }
   ],
-  "funding": [
-    {
-      "name": "funder name",
-      "comment": "grant for App"
-    }
-  ],
-  "references": [
-    {
-      "type": "IsDescribedBy",
-      "note": "Darwin, C. 1900. The creation. Journal XY. 1-2",
-      "url": "https://anylink.xyz"
-    }
-  ],
   "documentation": {
-    "url": "https://github.com/yourAccount/my-app/README.md"
+    "url": "https://github.com/movestore/my-app/README.md"
   }
 }
-
