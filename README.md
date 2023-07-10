@@ -39,7 +39,7 @@ None.
 `Filter by Time Interval` (integer): The length of interval, in minutes, to which to filter data.
 NULL means no filtering will take place.
 Defaults to 5-minute intervals.
-`move2::mt_filter_per_interval(criterion = first)` is used for this filtering.
+`move2::mt_filter_per_interval`  is used for this filtering with `criterion = first`.
 
 `Bind additional timestamp columns` (logical): Determines whether to append specific timestamp data (*hour,* *minute,* *second,* *hourmin,* and *yearmonthday*) to the output.
 If FALSE, overrides *Keep Essential Columns*.
