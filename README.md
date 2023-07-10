@@ -8,7 +8,7 @@ editor_options:
 
 MoveApps
 
-Github repository: [*https://github.com/callumjclarke/preprocessing*](https://github.com/callumjclarke/preprocessing){.uri}
+Github repository: *github.com/callumjclarke/Basic_Data_Processing_for_Merging_Studies*
 
 ## Description
 
