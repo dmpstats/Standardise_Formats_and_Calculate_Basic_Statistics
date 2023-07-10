@@ -4,7 +4,7 @@ editor_options:
     wrap: sentence
 ---
 
-# Basic Processing for Merging Studies
+# Basic Data Processing for Merging Studies
 
 MoveApps
 
