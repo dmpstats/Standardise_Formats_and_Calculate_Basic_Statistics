@@ -39,7 +39,7 @@ None.
 `Filter by Time Interval` (integer): The length of interval, in minutes, to which to filter data.
 NULL means no filtering will take place.
 Defaults to 5-minute intervals.
-`move2::mt_filter_per_interval`  is used for this filtering with `criterion = first`.
+`move2::mt_filter_per_interval` is used for this filtering with `criterion = first`.
 
 `Bind additional timestamp columns` (logical): Determines whether to append specific timestamp data (*hour,* *minute,* *second,* *hourmin,* and *yearmonthday*) to the output.
 If FALSE, overrides *Keep Essential Columns*.
@@ -85,5 +85,6 @@ NULL means no heading data is available.
 
 *Please indicate for each setting as well as the input data which behaviour the App is supposed to show in case of errors or NULL values/input. Please also add notes of possible errors that can happen if settings/parameters are improperly set and any other important information that you find the user should be aware of.*
 
-*Example:* **Setting `radius`:** If no radius AND no duration are given, the input data set is returned with a warning.
-If no radius is given (NULL), but a duration is defined then a default radius of 1000m = 1km is set.
+`Bind [timestamp/UTM/index...]:` If any of these options are left blank, they default to *TRUE*.
+`[ID/Altitude/Temp/Heading] Column`: If any of these options are left blank, no renaming takes place. If a column not present is named, the renaming is skipped.
+`EPSG`: If no EPSG code is provided, defaults to EPSG:32733 (UTM zone 33S). If the input is an invalid EPSG, transforming the coordinates will provide an error.
