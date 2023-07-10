@@ -12,15 +12,20 @@ Github repository: *github.com/callumjclarke/Basic_Data_Processing_for_Merging_S
 
 ## Description
 
-This MoveApp contains settings to perform various basic cleaning and binding processes, ranging from binding and renaming columns using standardized names to filtering the data to intervals of predefined duration.
-Any combination of the processes detailed below can be selected.
+This MoveApp contains settings to perform several basic cleaning processes and generation of extra columns of data. For example, using standardized names, binning the data to intervals of predefined duration and adding a speed column. The user may specify any combination of the processes detailed below.
 
 ## Documentation
 
-This MoveApp fulfills several purposes in a workflow.
-Its overall aim is to standardize any input study into a form that can be merged at a later stage in a workflow with additional studies (that have also been processed) to avoid discrepancies in study names, units, data volume, and/or column names.
+This MoveApp fulfills several purposes in a workflow. The overall aim is to standardize any input study into a form that can be merged at a later stage in a workflow with additional studies (that have also been processed) to avoid discrepancies in study names, units, data volume, and/or column names. In addition extra information such as location in UTMs, speed, distance travelled and time between points may be appended. 
 
-It contains options to: \* Filter the data to intervals of X minutes \* Append columns containing Universal Transverse Mercator (UTM) data \* Append an *index* column, consisting of the animal's ID and timestamp concatenated \* Append columns containing *speed*, *distance traveled* and/or *time since previous point* data \* Generate columns containing specific timestamp data (hour, minute and second, independently) \* Standardize column names for *altitude*, *temperature* and *heading* data across studies
+The user may select any of the following: 
+
+* Bin the data to intervals of X minutes 
+* Create and append columns containing Universal Transverse Mercator (UTM) data 
+* Create and append an *index* column, consisting of the animal's ID and timestamp concatenated 
+* Create and append columns containing *speed*, *distance traveled* and/or *time since previous point* data 
+* Create and append columns containing specific timestamp data (hour, minute and second, independently) 
+* Standardize column names for *altitude*, *temperature* and *heading* data across studies
 
 ### Input data
 
