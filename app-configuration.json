@@ -12,8 +12,8 @@
     "bind_timediff": true,
     "bind_study": true,
     "idcol": null,
-    "altitudecol": "height_above_ellipsoid",
-    "tempcol": "eobs_temperature",
-    "headingcol": "heading",
+    "altitudecol": null,
+    "tempcol": null,
+    "headingcol": null,
     "keepessentials": true
 }

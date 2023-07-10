@@ -208,7 +208,9 @@ rFunction = function(data, timefilter = 5,
   # Append speeds and final data ------------------------------------------------------
   
   if(bind_kmph == TRUE) {
-    data$kmph <- as.vector(mt_speed(data) * 0.06) # convert to kmph
+    data$kmph <- mt_speed(data) %>%
+      units::set_units("km/h") %>%
+      as.vector() # convert to kmph
   }
   if(bind_dist == TRUE) {
     data$dist_m <- as.vector(mt_distance(data))
