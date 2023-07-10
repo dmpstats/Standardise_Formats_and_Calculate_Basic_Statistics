@@ -247,17 +247,17 @@ rFunction = function(data, timefilter = 5,
                      "study"
   )
   if(keepessentials == TRUE) {
-    data %<>% select(any_of(essentialcols))
+    data %<>% dplyr::select(any_of(essentialcols))
   }
   
   # Remove index if desired
   if(bind_index == FALSE) {
-    data %<>% select(any_of(-index))
+    data %<>% dplyr::select(any_of(-index))
   }
   
   # Remove times if desired
   if(bind_times == FALSE) {
-    data %<>% select(any_of(-hour, -min, -secs, -hourmin, -yearmonthday, -gap_mins))
+    data %<>% dplyr::select(any_of(-hour, -min, -secs, -hourmin, -yearmonthday, -gap_mins))
   }
   
   # Return --------------------------------------------------------------------------

@@ -99,6 +99,22 @@
       "type": "CHECKBOX"
     }
   ],
+  "dependencies": {
+    "R": [
+      {
+        "name": "lubridate"
+      },
+      {
+        "name": "dplyr"
+      },
+      {
+        "name": "stringr"
+      },
+      {
+        "name": "magrittr"
+      }
+    ]
+  }
   "license": {
     "key": "MIT"
   },
