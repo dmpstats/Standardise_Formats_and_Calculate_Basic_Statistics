@@ -24,6 +24,14 @@ rFunction = function(data, timefilter = 5,
                      keepessentials = TRUE) {
 
 
+  # Check inputs ---------------------------------------------------------------------
+  
+  if(timefilter > 60) {
+    logger.fatal("Time interval for filtering is too large. Please provide a valid number of minutes in the range 0 < t < 60. Returning data")
+    return(data)
+  }
+  
+  
   # Generate optional columns --------------------------------------------------------
 
   colheadings <- c(altitudecol, tempcol, idcol, headingcol)
@@ -259,7 +267,7 @@ rFunction = function(data, timefilter = 5,
   
   # Remove times if desired
   if(bind_times == FALSE) {
-    data %<>% dplyr::select(any_of(-hour, -min, -secs, -hourmin, -yearmonthday, -gap_mins))
+    data %<>% dplyr::select(-any_of(hour, min, secs, hourmin, yearmonthday, gap_mins))
   }
   
   # Return --------------------------------------------------------------------------

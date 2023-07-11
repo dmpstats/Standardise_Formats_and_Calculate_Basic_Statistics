@@ -12,20 +12,24 @@ Github repository: *github.com/callumjclarke/Basic_Data_Processing_for_Merging_S
 
 ## Description
 
-This MoveApp contains settings to perform several basic cleaning processes and generation of extra columns of data. For example, using standardized names, binning the data to intervals of predefined duration and adding a speed column. The user may specify any combination of the processes detailed below.
+This MoveApp contains settings to perform several basic cleaning processes and generation of extra columns of data.
+For example, using standardized names, binning the data to intervals of predefined duration and adding a speed column.
+The user may specify any combination of the processes detailed below.
 
 ## Documentation
 
-This MoveApp fulfills several purposes in a workflow. The overall aim is to standardize any input study into a form that can be merged at a later stage in a workflow with additional studies (that have also been processed) to avoid discrepancies in study names, units, data volume, and/or column names. In addition extra information such as location in UTMs, speed, distance travelled and time between points may be appended. 
+This MoveApp fulfills several purposes in a workflow.
+The overall aim is to standardize any input study into a form that can be merged at a later stage in a workflow with additional studies (that have also been processed) to avoid discrepancies in study names, units, data volume, and/or column names.
+In addition extra information such as location in UTMs, speed, distance travelled and time between points may be appended.
 
-The user may select any of the following: 
+The user may select any of the following:
 
-* Bin the data to intervals of X minutes 
-* Create and append columns containing Universal Transverse Mercator (UTM) data 
-* Create and append an *index* column, consisting of the animal's ID and timestamp concatenated 
-* Create and append columns containing *speed*, *distance traveled* and/or *time since previous point* data 
-* Create and append columns containing specific timestamp data (hour, minute and second, independently) 
-* Standardize column names for *altitude*, *temperature* and *heading* data across studies
+-   Bin the data to intervals of X minutes
+-   Create and append columns containing Universal Transverse Mercator (UTM) data
+-   Create and append an *index* column, consisting of the animal's ID and timestamp concatenated
+-   Create and append columns containing *speed*, *distance traveled* and/or *time since previous point* data
+-   Create and append columns containing specific timestamp data (hour, minute and second, independently)
+-   Standardize column names for *altitude*, *temperature* and *heading* data across studies
 
 ### Input data
 
@@ -85,11 +89,12 @@ NULL means no heading data is available.
 
 -   `bind study` setting currently works only if all tracks in the data come from the same study, and if `study.id` or `study_id` is a column name in the track data. It will be unable to perform the operation if not
 -   Any `column` settings can be bugged by a column name with two periods: for example, 'altitude.col.xyz' could not be recognized. *Please describe shortly what most common errors of the App can be, how they occur and best ways of solving them.*
+-   `Filter by Time Interval` must be a number of minutes. If the provided interval is greater than 60, the data will be returned with a warning
 
 ### Null or error handling
 
 *Please indicate for each setting as well as the input data which behaviour the App is supposed to show in case of errors or NULL values/input. Please also add notes of possible errors that can happen if settings/parameters are improperly set and any other important information that you find the user should be aware of.*
 
-`Bind [timestamp/UTM/index...]:` If any of these options are left blank, they default to *TRUE*.
-`[ID/Altitude/Temp/Heading] Column`: If any of these options are left blank, no renaming takes place. If a column not present is named, the renaming is skipped.
-`EPSG`: If no EPSG code is provided, defaults to EPSG:32733 (UTM zone 33S). If the input is an invalid EPSG, transforming the coordinates will provide an error.
+-   `Bind [timestamp/UTM/index...]:` If any of these options are left blank, they default to *TRUE*
+-   `[ID/Altitude/Temp/Heading] Column`: If any of these options are left blank, no renaming takes place. If a column is named but not present in the dataset, the renaming is skipped
+-   `EPSG`: If no EPSG code is provided, defaults to EPSG:32733 (UTM zone 33S). If the input is an invalid EPSG, transforming the coordinates will provide an error
