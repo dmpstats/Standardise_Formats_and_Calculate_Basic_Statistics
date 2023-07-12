@@ -14,6 +14,7 @@ Github repository: *github.com/callumjclarke/Basic_Data_Processing_for_Merging_S
 
 This MoveApp contains settings to perform several basic cleaning processes and generation of extra columns of data.
 For example, using standardized names, binning the data to intervals of predefined duration and adding a speed column.
+This processing may also be useful for merging data from multiple studies of differing tag types. 
 The user may specify any combination of the processes detailed below.
 
 ## Documentation
@@ -45,13 +46,12 @@ None.
 
 ### Settings
 
-`Filter by Time Interval` (integer): The length of interval, in minutes, to which to filter data.
+`Filter by Time Interval` (integer): The length of interval, in minutes, to which to filter data. Must be less than 60
 NULL means no filtering will take place.
-Defaults to 5-minute intervals.
-`move2::mt_filter_per_interval` is used for this filtering with `criterion = first`.
+Defaults to 5-minute intervals. The function `move2::mt_filter_per_interval` is used for this filtering with the parameter `criterion = first`.
 
 `Bind additional timestamp columns` (logical): Determines whether to append specific timestamp data (*hour,* *minute,* *second,* *hourmin,* and *yearmonthday*) to the output.
-If FALSE, overrides *Keep Essential Columns*.
+If FALSE, this overrides *Keep Essential Columns*.
 
 `Bind UTM location data` (logical): Determines whether to generate and append Universal Transverse Mercator (UTM) data to the output.
 If TRUE, the primary geometry will become UTM data.
@@ -60,16 +60,15 @@ NOTE: This will also remove points without any attached geometry.
 `EPSG` (integer): If *Bind UTM location data* is selected, please provide a valid EPSG code for the transformed coordinate system.
 Defaults to EPSG:32733 (UTM zone 33S).
 
-`Bind index` (logical): Determines whether to append an event 'index' to the data, consisting of the tag's ID concatenated with its timestamp.
-If FALSE, overrides *Keep Essential Columns*.
+`Bind index` (logical): Determines whether to append a unique 'index' to the data, consisting of the tag's ID concatenated with its timestamp. NOTE: If FALSE, this overrides *Keep Essential Columns*. If there are duplicated timestamps for an individual, there will be duplicated indices. 
+
 `Bind km/h` (logical): Determines whether to append a speed column (units: km/h).
 
 `Bind distance` (logical): Determines whether to append a *distance travelled* from previous event column (units: metres).
 
-`Bind time difference` (logical): Determines whether to append a *time difference* from previous event column (units: hours).
+`Bind time difference` (logical): Determines whether to append a *time difference* from previous location column (units: hours).
 
-`Bind study` (logical): determines whether to append a *study name* column for each animal.
-This is recommended if merging with other studies later in this workflow
+`Bind study` (logical): determines whether to append a *study name* column. This is recommended if merging with other studies later in a workflow.
 
 `ID Column` (character): The name of the column to be used as primary identification.
 NULL means the default (taken from Movebank) will be used.
@@ -88,13 +87,11 @@ NULL means no heading data is available.
 ### Most common errors
 
 -   `bind study` setting currently works only if all tracks in the data come from the same study, and if `study.id` or `study_id` is a column name in the track data. It will be unable to perform the operation if not
--   Any `column` settings can be bugged by a column name with two periods: for example, 'altitude.col.xyz' could not be recognized. *Please describe shortly what most common errors of the App can be, how they occur and best ways of solving them.*
--   `Filter by Time Interval` must be a number of minutes. If the provided interval is greater than 60, the data will be returned with a warning
+-   Any `column` settings can be bugged by a column name with two periods: for example, 'altitude.col.xyz' could not be recognized. 
+-   `Filter by Time Interval` must be a number of minutes. If the provided interval is greater than 60, the data will be returned with a warning.
 
 ### Null or error handling
 
-*Please indicate for each setting as well as the input data which behaviour the App is supposed to show in case of errors or NULL values/input. Please also add notes of possible errors that can happen if settings/parameters are improperly set and any other important information that you find the user should be aware of.*
-
 -   `Bind [timestamp/UTM/index...]:` If any of these options are left blank, they default to *TRUE*
--   `[ID/Altitude/Temp/Heading] Column`: If any of these options are left blank, no renaming takes place. If a column is named but not present in the dataset, the renaming is skipped
+-   `[ID/Altitude/Temp/Heading] Column`: If any of these options are left blank, no renaming takes place. If a column is named but not present in the dataset, the renaming is ignored. 
 -   `EPSG`: If no EPSG code is provided, defaults to EPSG:32733 (UTM zone 33S). If the input is an invalid EPSG, transforming the coordinates will provide an error
