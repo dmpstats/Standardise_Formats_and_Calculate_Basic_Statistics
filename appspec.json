@@ -99,6 +99,7 @@
       "type": "CHECKBOX"
     }
   ],
+  "createsArtifacts": true,
   "dependencies": {
     "R": [
       {
@@ -112,6 +113,9 @@
       },
       {
         "name": "magrittr"
+      },
+      {
+        "name": "units"
       }
     ]
   }

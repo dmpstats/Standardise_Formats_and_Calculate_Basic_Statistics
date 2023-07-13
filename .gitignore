@@ -5,3 +5,6 @@
 .DS_Store
 data/output/**
 !data/output/.keep
+data/raw/input6_1.rds
+data/raw/input6_2.rds
+data/raw/workflow.rds
