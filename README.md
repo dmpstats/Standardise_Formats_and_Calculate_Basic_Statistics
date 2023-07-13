@@ -2,7 +2,7 @@
 
 MoveApps
 
-Github repository: *github.com/callumjclarke/Basic_Data_Processing_for_Merging_Studies*
+Github repository: *github.com/callumjclarke/Standardise_Formats_and_Calculate_Basic_Statistics*
 
 ## Description
 
