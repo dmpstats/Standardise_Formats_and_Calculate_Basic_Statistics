@@ -21,6 +21,8 @@ The user may select any of the following:
 -   Create and append columns containing specific timestamp data (hour, minute and second, independently)
 -   Standardize column names for *altitude*, *temperature* and *heading* data across studies
 
+Density plots displaying the distribution of timestamps, distances travelled, speeds, and (if available) altitudes will be outputted as artifacts. A table detailing summary statistics for each ID will also be generated as an artifact.
+
 ### Input data
 
 Move2 location object
@@ -31,7 +33,15 @@ Move2 location object
 
 ### Artefacts
 
-None.
+-   `summarystats.csv`: A summary table detailing key metrics for each ID
+
+-   `times.png`: A density plot displaying the frequency of timestamps, to identify any anomalies within the dataset
+
+-   `distances.png`: A density plot displaying the distances travelled by each ID
+
+-   `speeds.png`: A density plot displaying the speeds travelled by each ID
+
+-   `altitudes.png`: A density plot displaying the altitudes of each ID, if the data is available
 
 ### Settings
 
