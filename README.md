@@ -53,8 +53,6 @@ Move2 location object
 
 `EPSG` (integer): If *Bind UTM location data* is selected, please provide a valid EPSG code for the transformed coordinate system. Defaults to EPSG:32733 (UTM zone 33S).
 
-`Bind index` (logical): Determines whether to append a unique 'index' to the data, consisting of the tag's ID concatenated with its timestamp. NOTE: If FALSE, this overrides *Keep Essential Columns*. If there are duplicated timestamps for an individual, there will be duplicated indices.
-
 `Bind km/h` (logical): Determines whether to append a speed column (units: km/h).
 
 `Bind distance` (logical): Determines whether to append a *distance travelled* from previous event column (units: metres).

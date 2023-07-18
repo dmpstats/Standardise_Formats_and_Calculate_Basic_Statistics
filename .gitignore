@@ -8,3 +8,9 @@ data/output/**
 data/raw/input6_1.rds
 data/raw/input6_2.rds
 data/raw/workflow.rds
+tests/testthat/data/input3.rds
+tests/testthat/.times.png
+tests/testthat/.summarystats.csv
+tests/testthat/.speeds.png
+tests/testthat/.distances.png
+tests/testthat/.altitudes.png

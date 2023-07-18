@@ -3,6 +3,7 @@ library('dplyr')
 library('stringr')
 library('magrittr')
 require('lubridate')
+library('ggplot2')
 
 # Call useful function for later
 `%!in%` <- Negate(`%in%`)
@@ -12,7 +13,6 @@ rFunction = function(data, timefilter = 5,
                      bind_times = TRUE, 
                      createUTMs = TRUE,
                      EPSG = 32733,
-                     bind_index = TRUE, 
                      bind_kmph = TRUE,
                      bind_dist = TRUE,
                      bind_timediff = TRUE,
@@ -46,7 +46,7 @@ rFunction = function(data, timefilter = 5,
 
   # Process altitude data
   if(is.null(altitudecol)) {
-    data %<>% mutate(altitude = NA)
+    data %<>% dplyr::mutate(altitude = NA)
   } else {
     # If altitude is present, rename the column
     try(data %<>% rename(altitude = altitudecol))
@@ -55,7 +55,7 @@ rFunction = function(data, timefilter = 5,
   
   # Process temperature data
   if(is.null(tempcol)) {
-    data %<>% mutate(temperature = NA)
+    data %<>% dplyr::mutate(temperature = NA)
   } else {
     # If altitude is present, rename the column
     try(data %<>% rename(temperature = tempcol))
@@ -139,29 +139,7 @@ rFunction = function(data, timefilter = 5,
     timeunit <- paste0(as.character(timefilter), " mins")
     
     data %<>% mt_filter_per_interval(criterion = "first", unit = timeunit)
-    
-    # # generate necessary cols (if don't already exist)
-    # if("gap_mins" %!in% colnames(data)) {
-    #   gap_mins = difftime(mt_time(data), lag(mt_time(data)), units = "mins")
-    # }
-    # 
-    # 
-    # 
-    # data <- data %>% 
-    #   mutate(temptag = mt_track_id(data)) %>% # used to sort below
-    #   dplyr::mutate(binmin = ceiling_date(mt_time(data), unit = minutes(timefilter))) # create time bins for filtering
-    # 
-    # logger.info("Bins created. Grouping and summarising")
-    # # The following is slow. We should try to find alternatives
-    # data <- data %>%
-    #   group_by(temptag, binmin) %>% 
-    #   summarise_all(.funs = first) # need original obj names
-    # 
-    # logger.info("Returning filtered data to move2 object")
-    # # Return object to move2 class, as summarise() changes to sf
-    # drop.cols <- c('binmin', 'temptag', 'gap_mins')
-    # data <- mt_as_move2(data, track_id_column = trackname, time_column = timename) %>%
-    #   select(-one_of(drop.cols))
+
     
 
     logger.info("Filtering completed.")
@@ -188,7 +166,7 @@ rFunction = function(data, timefilter = 5,
       logger.info("No empty points located. Proceeding with UTMs.")
     } else {
       logger.warn(paste0("Empty point(s) located, with indexes: ", 
-                         ifelse(bind_index, removeindex, "[INDEXES UNAVAILABLE. PLEASE USE 'bind_index' PROPERTY IN SETTINGS]")
+                         removeindex
       ))
 
       logger.warn("Removing empty points and continuing with UTMs.")
@@ -233,14 +211,16 @@ rFunction = function(data, timefilter = 5,
   
   # Summary table by ID:
   summarystats <- data %>%
-    bind_cols(TIME2 = mt_time(.),
-              TIMEDIFF2 = mt_time_lags(.),
-              SPEED2 = mt_speed(.),
-              DIST2 = mt_distance(.) %>% as.vector()) %>%
+    bind_cols(
+      ID2 = mt_track_id(.),
+      TIME2 = mt_time(.),
+      TIMEDIFF2 = mt_time_lags(.),
+      SPEED2 = mt_speed(.),
+      DIST2 = mt_distance(.) %>% as.vector()) %>%
     as.data.frame() %>%
-    group_by(individual_local_identifier) %>%
-    summarise(first_obs = min(TIME2),
-              last_obs = max(TIME2),
+    group_by(ID2) %>%
+    summarise(first_obs = min(TIME2, na.rm = TRUE),
+              last_obs = max(TIME2, na.rm = TRUE),
               max_kmph = max(SPEED2, na.rm = TRUE),
               mean_kmph = mean(SPEED2, na.rm = TRUE),
               med_kmph = median(SPEED2, na.rm = TRUE),
@@ -317,14 +297,10 @@ rFunction = function(data, timefilter = 5,
     data %<>% dplyr::select(any_of(essentialcols))
   }
   
-  # Remove index if desired
-  if(bind_index == FALSE) {
-    data %<>% dplyr::select(any_of(-index))
-  }
-  
+
   # Remove times if desired
   if(bind_times == FALSE) {
-    data %<>% dplyr::select(-any_of(hour, min, secs, hourmin, yearmonthday, gap_mins))
+    data %<>% dplyr::select(-any_of(c("hour", "min", "secs", "hourmin", "yearmonthday", "gap_mins")))
   }
   
   # Return --------------------------------------------------------------------------

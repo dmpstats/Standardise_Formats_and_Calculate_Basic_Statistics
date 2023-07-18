@@ -15,13 +15,6 @@
       "type": "CHECKBOX"
     },
     {
-      "id": "bind_index",
-      "name": "Bind index column",
-      "description": "Determines whether or not to bind an 'index' column consisting of ID and timestamp data.",
-      "defaultValue": true,
-      "type": "CHECKBOX"
-    },
-    {
       "id": "bind_kmph",
       "name": "Bind speed column",
       "description": "Determines whether or not to bind a 'speed' column (units: km/h).",

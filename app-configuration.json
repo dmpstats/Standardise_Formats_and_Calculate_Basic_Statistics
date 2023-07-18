@@ -6,7 +6,6 @@
     "bind_times": true,
     "createUTMs": true,
     "EPSG": 32733,
-    "bind_index": true,
     "bind_kmph": true,
     "bind_dist": true,
     "bind_timediff": true,
@@ -15,5 +14,5 @@
     "altitudecol": null,
     "tempcol": null,
     "headingcol": null,
-    "keepessentials": true
+    "keepessentials": false
 }
