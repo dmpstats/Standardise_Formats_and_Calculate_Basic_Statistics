@@ -22,7 +22,7 @@ test_that("timefilter works", {
 })
 
 
-test_that("generated columns are included", {
+test_that("generated columns are binded", {
   
   actual <- rFunction(data = test_data, 
                       timefilter = 5,
@@ -34,7 +34,7 @@ test_that("generated columns are included", {
                       bind_timediff =TRUE,
                       bind_study = TRUE,
                       idcol = NULL,
-                      altitudecol = NULL,
+                      altitudecol = "argos.altitude",
                       tempcol = NULL,
                       headingcol = NULL,
                       keepessentials = FALSE)
@@ -58,17 +58,19 @@ test_that("generated columns are included", {
                   "lon",
                   "lat")
   expect_contains(colnames(actual), expectcols)
-  
+  expect(all(is.numeric(actual$kmph)), failure_message = "Output speeds (kmph) are non-numeric")
+  expect(all(is.numeric(actual$dist_m)), failure_message = "Output distances between locations are non-numeric")
   
 }) 
 
-test_that("alternative EPSGs don't throw errors", {
+
+test_that("alternative EPSGs can still be handled", {
   
   actual <- rFunction(data = test_data, 
                                         timefilter = 5,
                                         bind_times = TRUE,
                                         createUTMs = TRUE,
-                                        EPSG = 2039,
+                                        EPSG = 2048,
                                         bind_kmph = TRUE,
                                         bind_dist = TRUE,
                                         bind_timediff =TRUE,
@@ -79,6 +81,51 @@ test_that("alternative EPSGs don't throw errors", {
                                         headingcol = NULL,
                                         keepessentials = FALSE)
   expect_contains(colnames(actual), c("x", "y"))
-
+  expect(all(is.double(c(actual$x, actual$y))), failure_message = "Output UTMs are non-numeric")
+  expect(dplyr::between(sf::st_coordinates(actual)[1,]["X"], 473631, 473632), failure_message = "UTM X-coordinate is incorrectly transformed")
+  expect(dplyr::between(sf::st_coordinates(actual)[1,]["Y"], -5799990, -5799989), failure_message = "UTM Y-coordinate is incorrectly transformed")
   
-}) 
+  
+})
+
+
+test_that("no IDs are removed", {
+  
+  actual <- rFunction(data = test_data, 
+                      timefilter = 20,
+                      bind_times = TRUE,
+                      createUTMs = TRUE,
+                      EPSG = 32733,
+                      bind_kmph = TRUE,
+                      bind_dist = TRUE,
+                      bind_timediff =TRUE,
+                      bind_study = TRUE,
+                      idcol = NULL,
+                      altitudecol = NULL,
+                      tempcol = NULL,
+                      headingcol = NULL,
+                      keepessentials = FALSE)
+  
+  expect(unique(move2::mt_track_id(test_data)) == unique(move2::mt_track_id(actual)), failure_message = "IDs in the input data are not accounted for in the output")
+  
+})
+
+
+test_that("misnamed columns throw error message", {
+  
+  expect_error(actual <- rFunction(data = test_data, 
+                                   timefilter = 5,
+                                   bind_times = TRUE,
+                                   createUTMs = TRUE,
+                                   EPSG = 32733,
+                                   bind_kmph = TRUE,
+                                   bind_dist = TRUE,
+                                   bind_timediff =TRUE,
+                                   bind_study = TRUE,
+                                   idcol = NULL,
+                                   altitudecol = "THIS_IS_NOT_A_COLUMN",
+                                   tempcol = NULL,
+                                   headingcol = NULL,
+                                   keepessentials = FALSE))
+  
+})

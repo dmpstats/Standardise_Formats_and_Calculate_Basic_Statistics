@@ -40,7 +40,7 @@ rFunction = function(data, timefilter = 5,
   if(any(colheadings %!in% colnames(data))) {
     missing <- colheadings[which(colheadings %!in% colnames(data))]
     logger.fatal(paste0("One of the input column names is not present in this dataset. Please check input settings carefully. Missing column(s): ", toString(missing)))
-    return(data)
+    stop(paste0("One of the input column names is not present in this dataset. Please check input settings carefully. Missing column(s): ", toString(missing)))
   }
   
 
@@ -48,8 +48,14 @@ rFunction = function(data, timefilter = 5,
   if(is.null(altitudecol)) {
     data %<>% dplyr::mutate(altitude = NA)
   } else {
+
     # If altitude is present, rename the column
-    try(data %<>% rename(altitude = altitudecol))
+    if(grepl(".", altitudecol)) { # solves bug involving periods and .json file transfer
+      data %<>% mutate(altitude = as.data.frame(data)[altitudecol])
+    } else {
+      data %<>% rename(altitude = altitudecol)
+    }
+    
 
   }
   
@@ -57,17 +63,25 @@ rFunction = function(data, timefilter = 5,
   if(is.null(tempcol)) {
     data %<>% dplyr::mutate(temperature = NA)
   } else {
-    # If altitude is present, rename the column
-    try(data %<>% rename(temperature = tempcol))
-  }
+    
+    # If temperature is present, rename the column
+    if(grepl(".", tempcol)) { # solves bug involving periods and .json file transfer
+      data %<>% mutate(temperature = as.data.frame(data)[tempcol])
+    } else {
+      data %<>% rename(temperature = tempcol)
+    }  }
   
   # Process heading data
   if(is.null(headingcol)) {
     data %<>% mutate(heading = NA)
   } else {
-    # If altitude is present, rename the column
-    try(data %<>% rename(heading = headingcol))
-  }
+    
+    # If heading is present, rename the column
+    if(grepl(".", headingcol)) { # solves bug involving periods and .json file transfer
+      data %<>% mutate(heading = as.data.frame(data)[headingcol])
+    } else {
+      data %<>% rename(heading)
+    }  }
   
   # Define trackID 
   if(!is.null(idcol)) {
@@ -130,17 +144,12 @@ rFunction = function(data, timefilter = 5,
   
   # Filter to predefined intervals --------------------------------------------------
   
-  # We should tr mt_filter_by_interval in place of this section
-  # Hopefully less computationally demanding
-
+  
   if(!is.null(timefilter)) {
 
     logger.info(paste0("Filtering to bins of duration ", timefilter, " minutes"))
     timeunit <- paste0(as.character(timefilter), " mins")
-    
     data %<>% mt_filter_per_interval(criterion = "first", unit = timeunit)
-
-    
 
     logger.info("Filtering completed.")
   }
@@ -180,7 +189,7 @@ rFunction = function(data, timefilter = 5,
     crscode <- sf::st_crs(EPSG) # retrieve CRS code for given EPSG
     data %<>% sf::st_transform(crscode)
     
-    newcoords <- sf::st_coordinates(data)
+    newcoords <- sf::st_coordinates(data) %>% as.data.frame()
     data %<>% mutate(x = newcoords[, 1],
                      y = newcoords[, 2])
     
@@ -225,8 +234,8 @@ rFunction = function(data, timefilter = 5,
               mean_kmph = mean(SPEED2, na.rm = TRUE),
               med_kmph = median(SPEED2, na.rm = TRUE),
               max_gap_mins = max(TIMEDIFF2, na.rm = TRUE),
-              max_alt = ifelse("altitude" %in% colnames(data), max(altitude, na.rm = TRUE), NA),
-              min_alt = ifelse("altitude" %in% colnames(data), min(altitude, na.rm = TRUE), NA),
+              max_alt = ifelse(!is.null(altitudecol), max(altitude, na.rm = TRUE), NA),
+              min_alt = ifelse(!is.null(altitudecol), min(altitude, na.rm = TRUE), NA),
               total_km = sum(DIST2, na.rm = TRUE) / 1000
     )
   
@@ -258,7 +267,7 @@ rFunction = function(data, timefilter = 5,
   png(appArtifactPath("speeds.png"))
   dev.off()
   
-  if("altitude" %in% colnames(data)) {
+  if(!is.null(altitudecol)) {
     ggplot(data, aes(x = altitude, fill = mt_track_id(data))) +
       geom_density(alpha = 0.4) +
       xlab("Altitude") +

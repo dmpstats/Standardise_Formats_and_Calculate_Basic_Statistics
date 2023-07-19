@@ -10,9 +10,9 @@ This MoveApp contains settings to perform several basic cleaning processes and g
 
 ## Documentation
 
-This MoveApp fulfills several purposes in a workflow. The overall aim is to standardize any input study into a form that can be merged at a later stage in a workflow with additional studies (that have also been processed) to avoid discrepancies in study names, units, data volume, and/or column names. In addition extra information such as location in UTMs, speed, distance travelled and time between points may be appended.
+This MoveApp fulfills several purposes in a workflow. The overall aim is to standardize any input study into a format that can be merged at a later stage in a workflow with additional studies (that have also been processed) to avoid discrepancies in study names, units, data volume, and/or column names. In addition extra information such as location in UTMs, speed, distance travelled and time between points may be appended.
 
-The user may select any of the following:
+The user may select any of the following settings:
 
 -   Bin the data to intervals of X minutes
 -   Create and append columns containing Universal Transverse Mercator (UTM) data
@@ -74,7 +74,7 @@ Move2 location object
 ### Most common errors
 
 -   `bind study` setting currently works only if all tracks in the data come from the same study, and if `study.id` or `study_id` is a column name in the track data. It will be unable to perform the operation if not
--   Any `column` settings can be bugged by a column name with two periods: for example, 'altitude.col.xyz' could not be recognized.
+-   Any `column` settings can be bugged by a column name with two (and, sometimes, one) periods: for example, 'altitude.col.xyz' could not be recognized.
 -   `Filter by Time Interval` must be a number of minutes. If the provided interval is greater than 60, the data will be returned with a warning.
 
 ### Null or error handling

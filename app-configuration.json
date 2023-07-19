@@ -11,7 +11,7 @@
     "bind_timediff": true,
     "bind_study": true,
     "idcol": null,
-    "altitudecol": null,
+    "altitudecol": "argos.altitude",
     "tempcol": null,
     "headingcol": null,
     "keepessentials": false
