@@ -74,7 +74,7 @@ Move2 location object
 ### Most common errors
 
 -   `bind study` setting currently works only if all tracks in the data come from the same study, and if `study.id` or `study_id` is a column name in the track data. It will be unable to perform the operation if not
--   Any `column` settings can be bugged by a column name with two (and, sometimes, one) periods: for example, 'altitude.col.xyz' could not be recognized.
+-   Any `column` settings can be bugged by a column name with two (and, sometimes, one) periods: for example, 'altitude.col.xyz' could not be recognized. To solve this bug, any column containing a period must be duplicated (instead of renamed) with the new name `altutide/temperature/heading`.
 -   `Filter by Time Interval` must be a number of minutes. If the provided interval is greater than 60, the data will be returned with a warning.
 
 ### Null or error handling

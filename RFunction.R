@@ -50,25 +50,29 @@ rFunction = function(data, timefilter = 5,
   } else {
 
     # If altitude is present, rename the column
-    if(grepl(".", altitudecol)) { # solves bug involving periods and .json file transfer
-      data %<>% mutate(altitude = as.data.frame(data)[altitudecol])
+    if(grepl("\\.", altitudecol)) { # solves bug involving periods and .json file transfer
+      data %<>% mutate(altitude = as.data.frame(data)[altitudecol]) 
     } else {
-      data %<>% rename(altitude = altitudecol)
+      data %<>% rename(altitude = altitudecol) 
+      data$altitude %<>% as.vector() # remove units
     }
     
 
   }
   
+  
+
   # Process temperature data
   if(is.null(tempcol)) {
     data %<>% dplyr::mutate(temperature = NA)
   } else {
     
     # If temperature is present, rename the column
-    if(grepl(".", tempcol)) { # solves bug involving periods and .json file transfer
+    if(grepl("\\.", tempcol)) { # solves bug involving periods and .json file transfer
       data %<>% mutate(temperature = as.data.frame(data)[tempcol])
     } else {
       data %<>% rename(temperature = tempcol)
+      data$temperature %<>% as.vector() # remove units
     }  }
   
   # Process heading data
@@ -77,10 +81,11 @@ rFunction = function(data, timefilter = 5,
   } else {
     
     # If heading is present, rename the column
-    if(grepl(".", headingcol)) { # solves bug involving periods and .json file transfer
+    if(grepl("\\.", headingcol)) { # solves bug involving periods and .json file transfer
       data %<>% mutate(heading = as.data.frame(data)[headingcol])
     } else {
-      data %<>% rename(heading)
+      data %<>% rename(heading = headingcol)
+      data$heading %<>% as.vector()
     }  }
   
   # Define trackID 
@@ -175,7 +180,7 @@ rFunction = function(data, timefilter = 5,
       logger.info("No empty points located. Proceeding with UTMs.")
     } else {
       logger.warn(paste0("Empty point(s) located, with indexes: ", 
-                         removeindex
+                         toString(removeindex)
       ))
 
       logger.warn("Removing empty points and continuing with UTMs.")
@@ -202,15 +207,19 @@ rFunction = function(data, timefilter = 5,
   
   # Append speeds and final data ------------------------------------------------------
   
+  
   if(bind_kmph == TRUE) {
+    logger.info("Binding speed column")
     data$kmph <- mt_speed(data) %>%
       units::set_units("km/h") %>%
       as.vector() # convert to kmph
   }
   if(bind_dist == TRUE) {
+    logger.info("Binding distance column")
     data$dist_m <- as.vector(mt_distance(data))
   }
   if(bind_timediff == TRUE) {
+    logger.info("Binding time difference column")
     data %<>% mutate(
       timediff_hrs =   as.numeric(difftime(mt_time(data), lag(mt_time(data), default = mt_time(data)[1]), units = "hours"))
     )
@@ -218,6 +227,9 @@ rFunction = function(data, timefilter = 5,
   
   # Generate summary stats and plots ---------------------------------------------------
   
+
+  logger.info("Plotting and summarising")
+
   # Summary table by ID:
   summarystats <- data %>%
     bind_cols(
@@ -241,41 +253,45 @@ rFunction = function(data, timefilter = 5,
   
   write.csv(summarystats, file = appArtifactPath("summarystats.csv"))
   
+  
   # Generate density plots:
-  ggplot(data, aes(x = mt_time(data), fill = mt_track_id(data))) +
+  png(appArtifactPath("times.png"))
+  times <- ggplot(data, aes(x = mt_time(data), fill = mt_track_id(data))) +
     geom_density(alpha = 0.4) +
     ggtitle("Timing of observations by ID") +
     xlab("Date") +
     #theme(legend.position = "none") +
     scale_fill_discrete(name = "Track ID")
-  png(appArtifactPath("times.png"))
+  print(times)
   dev.off()
   
-  ggplot(data, aes(x = dist_m, fill = mt_track_id(data))) +
-    geom_density(alpha = 0.4)+
-    xlab("Distance travelled (m)") +
-    ggtitle("Distribution of Distance Travelled by ID") +
-    guides(fill=guide_legend(title="Track ID"))
-  png(appArtifactPath("distances.png"))
-  dev.off()
-  
-  ggplot(data, aes(x = kmph, fill = mt_track_id(data))) + 
-    geom_density(alpha = 0.4) +
-    ggtitle("Distribution of speed by ID") +
-    xlab("Speed (km/h)") +
-    guides(fill=guide_legend(title="Track ID"))
-  png(appArtifactPath("speeds.png"))
-  dev.off()
-  
-  if(!is.null(altitudecol)) {
-    ggplot(data, aes(x = altitude, fill = mt_track_id(data))) +
-      geom_density(alpha = 0.4) +
-      xlab("Altitude") +
-      ggtitle("Distribution of Altitude by ID") +
+  if (bind_dist == TRUE) {
+    png(appArtifactPath("distances.png"))
+    adjData <- data %>% filter(dist_m < quantile(data$dist_m, 0.9, na.rm = TRUE)) 
+    dists <- ggplot(adjData, 
+                    aes(x = dist_m, fill = mt_track_id(adjData))) +
+      geom_density(alpha = 0.4)+
+      xlab("Distance travelled (m)") +
+      ggtitle("Distribution of Distance Travelled by ID (up to 95th percentile)") +
       guides(fill=guide_legend(title="Track ID"))
-    png(appArtifactPath("altitudes.png"))
+    print(dists)
     dev.off()
   }
+
+  if(bind_kmph == TRUE) {
+    png(appArtifactPath("speeds.png"))
+    adjData <-data %>% filter(kmph < quantile(data$kmph, 0.9, na.rm = TRUE)) 
+    speeds <- ggplot(adjData, 
+                     aes(x = kmph, fill = mt_track_id(adjData))) + 
+      geom_density(alpha = 0.4) +
+      ggtitle("Distribution of speed by ID (up to 95th percentile)") +
+      xlab("Speed (km/h)") +
+      guides(fill=guide_legend(title="Track ID"))
+    print(speeds)
+    dev.off()
+  }
+
+
   
 
   # Select only essential columns --------------------------------------------------------
@@ -302,6 +318,7 @@ rFunction = function(data, timefilter = 5,
                      "lat",
                      "study"
   )
+
   if(keepessentials == TRUE) {
     data %<>% dplyr::select(any_of(essentialcols))
   }
