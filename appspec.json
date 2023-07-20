@@ -2,8 +2,8 @@
   "settings": [
     {
       "id": "timefilter",
-      "name": "Filter by Time Interval",
-      "description": "Determines the size of the interval (minutes) that the input data should be thinned too. Blank means no filtering takes place. NOTE: We do not recommend applying this for high-resolution datasets of duration greater than 1 month.",
+      "name": "Filter by Time Interval (minutes)",
+      "description": "Determines the size of the interval (minutes) that the input data should be thinned to. Leaving this setting blank means no filtering takes place.",
       "defaultValue": null,
       "type": "INTEGER"
     },
@@ -58,29 +58,29 @@
     },
     {
       "id": "idcol",
-      "name": "Name of index column",
-      "description": "Insert the name of the column to be used as primary identification. Blank means the default will be used. NOTE: Please replace periods (.) with underscores (_) in any provided names.",
+      "name": "Name of 'primary animal identifier' column",
+      "description": "Insert the name of the column to be used as primary identification. If no column is named, the default identifier column as used in Movebank remains the primary identifier.",
       "defaultValue": null,
       "type": "STRING"
     },
     {
       "id": "altitudecol",
       "name": "Name of altitude column",
-      "description": "Insert the name of the column containing altitude data (if any). If left blank, an empty column is created. NOTE: Please replace periods (.) with underscores (_) in any provided names.",
+      "description": "Insert the name of the column containing altitude data (if any). If left blank, an empty column is created.",
       "defaultValue": null,
       "type": "STRING"
     },
     {
       "id": "tempcol",
       "name": "Name of temperature column",
-      "description": "Insert the name of the column containing temperature data in celsius (if any). If left blank, an empty column is created. NOTE: Please replace periods (.) with underscores (_) in any provided names.",
+      "description": "Insert the name of the column containing temperature data in celsius (if any). If left blank, an empty column is created.",
       "defaultValue": null,
       "type": "STRING"
     },
     {
       "id": "headingcol",
       "name": "Name of heading column",
-      "description": "Insert the name of the column containing heading data in degrees (if any). If left blank, an empty column is craeteed. NOTE: Please replace periods (.) with underscores (_) in any provided names.",
+      "description": "Insert the name of the column containing heading data in degrees (if any). If left blank, an empty column is created.",
       "defaultValue": null,
       "type": "STRING"
     },
@@ -95,6 +95,12 @@
   "createsArtifacts": true,
   "dependencies": {
     "R": [
+      {
+        "name": "move2"
+      },
+      {
+        "name": "ggplot2"
+      },
       {
         "name": "lubridate"
       },
@@ -117,8 +123,11 @@
   },
   "language": "eng",
   "keywords": [
-    "example",
-    "template"
+    "speed",
+    "filter",
+    "UTM",
+    "distance",
+    "summary"
   ],
   "people": [
     {
@@ -132,10 +141,49 @@
       ],
       "orcid": null,
       "affiliation": "University of St Andrews",
+      "affiliationRor": "https://ror.org/02wn5qz54"
+    },
+    {
+      "firstName": "Lindesay",
+      "middleInitials": "",
+      "lastName": "Scott-Hayward",
+      "email": "lass@st-andrews.ac.uk",
+      "roles": [
+        "author",
+        "creator"
+      ],
+      "orcid": "0000-0003-3402-533X",
+      "affiliation": "University of St Andrews",
+      "affiliationRor": "https://ror.org/02wn5qz54"
+    },
+    {
+      "firstName": "Monique",
+      "middleInitials": "",
+      "lastName": "MacKenzie",
+      "email": "monique.mackenzie@st-andrews.ac.uk",
+      "roles": [
+        "author",
+        "creator"
+      ],
+      "orcid": "0000-0002-8505-6585",
+      "affiliation": "University of St Andrews",
+      "affiliationRor": "https://ror.org/02wn5qz54"
+    },
+    {
+      "firstName": "Bruno",
+      "middleInitials": "",
+      "lastName": "Caneco",
+      "email": "bruno@dmpstats.co.uk",
+      "roles": [
+        "author",
+        "creator"
+      ],
+      "orcid": null,
+      "affiliation": "DMP Stats",
       "affiliationRor": null
     }
   ],
   "documentation": {
-    "url": "https://github.com/movestore/my-app/README.md"
+    "url": "https://github.com/movestore/Standardise_Formats_and_Calculate_Basic_Statistics/README.md"
   }
 }
