@@ -9,10 +9,9 @@
     "bind_kmph": true,
     "bind_dist": true,
     "bind_timediff": true,
-    "bind_study": true,
-    "idcol": null,
-    "altitudecol": null,
-    "tempcol": null,
-    "headingcol": null,
+    "idcol": "",
+    "altitudecol": "",
+    "tempcol": "",
+    "headingcol": "",
     "keepessentials": true
 }

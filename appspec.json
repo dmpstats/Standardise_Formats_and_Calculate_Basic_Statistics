@@ -4,7 +4,7 @@
       "id": "timefilter",
       "name": "Filter by Time Interval (minutes)",
       "description": "Determines the size of the interval (minutes) that the input data should be thinned to. Leaving this setting blank means no filtering takes place.",
-      "defaultValue": null,
+      "defaultValue": 0,
       "type": "INTEGER"
     },
     {
@@ -50,38 +50,31 @@
       "type": "CHECKBOX"
     },
     {
-      "id": "bind_study",
-      "name": "Bind 'study name' column",
-      "description": "Determines whether or not to bind a standardised study name column. Recommended if using several studies later in this workflow",
-      "defaultValue": true,
-      "type": "CHECKBOX"
-    },
-    {
       "id": "idcol",
       "name": "Name of 'primary animal identifier' column",
       "description": "Insert the name of the column to be used as primary identification. If no column is named, the default identifier column as used in Movebank remains the primary identifier.",
-      "defaultValue": null,
+      "defaultValue": "",
       "type": "STRING"
     },
     {
       "id": "altitudecol",
       "name": "Name of altitude column",
       "description": "Insert the name of the column containing altitude data (if any). If left blank, an empty column is created.",
-      "defaultValue": null,
+      "defaultValue": "",
       "type": "STRING"
     },
     {
       "id": "tempcol",
       "name": "Name of temperature column",
       "description": "Insert the name of the column containing temperature data in celsius (if any). If left blank, an empty column is created.",
-      "defaultValue": null,
+      "defaultValue": "",
       "type": "STRING"
     },
     {
       "id": "headingcol",
       "name": "Name of heading column",
       "description": "Insert the name of the column containing heading data in degrees (if any). If left blank, an empty column is created.",
-      "defaultValue": null,
+      "defaultValue": "",
       "type": "STRING"
     },
     {

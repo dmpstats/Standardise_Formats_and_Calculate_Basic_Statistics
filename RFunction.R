@@ -4,6 +4,7 @@ library('stringr')
 library('magrittr')
 require('lubridate')
 library('ggplot2')
+library('units')
 
 # Call useful function for later
 `%!in%` <- Negate(`%in%`)
@@ -16,7 +17,6 @@ rFunction = function(data, timefilter = 5,
                      bind_kmph = TRUE,
                      bind_dist = TRUE,
                      bind_timediff = TRUE,
-                     bind_study = TRUE,
                      idcol = NULL, 
                      altitudecol = NULL, 
                      tempcol = NULL, 
@@ -34,8 +34,14 @@ rFunction = function(data, timefilter = 5,
   
   # Generate optional columns --------------------------------------------------------
 
+  
+  logger.trace(paste0("Provided column names are: \n idcol: ", idcol,
+                      "\n altitudecol: ", altitudecol,
+                      "\n tempcol: ", tempcol, 
+                      "\n headingcol: ", headingcol))
+  logger.trace(paste0("Column names in the dataset are: \n", toString(colnames(data))))
   colheadings <- c(altitudecol, tempcol, idcol, headingcol)
-  colheadings <- Filter(Negate(is.null), colheadings)
+  colheadings <- colheadings[colheadings != ""] # remove empty inputs
   
   if(any(colheadings %!in% colnames(data))) {
     missing <- colheadings[which(colheadings %!in% colnames(data))]
@@ -45,7 +51,7 @@ rFunction = function(data, timefilter = 5,
   
 
   # Process altitude data
-  if(is.null(altitudecol)) {
+  if(altitudecol == "") {
     data %<>% dplyr::mutate(altitude = NA)
   } else {
 
@@ -63,7 +69,7 @@ rFunction = function(data, timefilter = 5,
   
 
   # Process temperature data
-  if(is.null(tempcol)) {
+  if(tempcol == "") {
     data %<>% dplyr::mutate(temperature = NA)
   } else {
     
@@ -76,7 +82,7 @@ rFunction = function(data, timefilter = 5,
     }  }
   
   # Process heading data
-  if(is.null(headingcol)) {
+  if(headingcol == "") {
     data %<>% mutate(heading = NA)
   } else {
     
@@ -89,38 +95,41 @@ rFunction = function(data, timefilter = 5,
     }  }
   
   # Define trackID 
-  if(!is.null(idcol)) {
+  if(idcol != "") {
     logger.info(paste0("Changing primary ID column to ", idcol))
     mt_track_data(data)
     data <- mt_set_track_id_column(data, idcol)
   }
   
+  # The following is deprecated until later changes
+  # Calling movebank study name requires a Movebank handle input
+  
   # Add study name
-  if(bind_study == TRUE) {
+  # if(bind_study == TRUE) {
+  #   
+  #   if("study.id" %!in% colnames(mt_track_data(data)) & "study_id" %!in% colnames(mt_track_data(data))) {
+  #     logger.warn("study.id and study_id are not columns in the track data. Unable to bind study column")
+  #   } else {
+  #     
+  #     if("study.id" %in% colnames(mt_track_data(data))) {
+  #       study_id <- mt_track_data(data)$study.id
+  #     } else {
+  #       study_id <- mt_track_data(data)$study_id
+  #     }
+  #     
+  #     studyname <- movebank_download_study_info(id = study_id)$name
+  #     
+  #     # CC: I'll update this to work on >1 studies later
+  #     if(length(unique(study_id)) > 1) {
+  #       logger.warn("Input contains data from several studies. Study ID will not be appended.")
+  #     } else {
+  #       data %<>% mutate(study = rep(studyname, nrow(data)))
+  #       logger.info("Study column appended")
+  #     }
+  #     
+  #   }
     
-    if("study.id" %!in% colnames(mt_track_data(data)) & "study_id" %!in% colnames(mt_track_data(data))) {
-      logger.warn("study.id and study_id are not columns in the track data. Unable to bind study column")
-    } else {
-      
-      if("study.id" %in% colnames(mt_track_data(data))) {
-        study_id <- mt_track_data(data)$study.id
-      } else {
-        study_id <- mt_track_data(data)$study_id
-      }
-      
-      studyname <- movebank_download_study_info(id = study_id)$name
-      
-      # CC: I'll update this to work on >1 studies later
-      if(length(unique(study_id)) > 1) {
-        logger.warn("Input contains data from several studies. Study ID will not be appended.")
-      } else {
-        data %<>% mutate(study = rep(studyname, nrow(data)))
-        logger.info("Study column appended")
-      }
-      
-    }
-    
-  }
+  #}
   
   # Add indexes -----------------------------------------------------------------
 
@@ -150,7 +159,7 @@ rFunction = function(data, timefilter = 5,
   # Filter to predefined intervals --------------------------------------------------
   
   
-  if(!is.null(timefilter)) {
+  if(timefilter != 0) {
 
     logger.info(paste0("Filtering to bins of duration ", timefilter, " minutes"))
     timeunit <- paste0(as.character(timefilter), " mins")
@@ -246,8 +255,8 @@ rFunction = function(data, timefilter = 5,
               mean_kmph = mean(SPEED2, na.rm = TRUE),
               med_kmph = median(SPEED2, na.rm = TRUE),
               max_gap_mins = max(TIMEDIFF2, na.rm = TRUE),
-              max_alt = ifelse(!is.null(altitudecol), max(altitude, na.rm = TRUE), NA),
-              min_alt = ifelse(!is.null(altitudecol), min(altitude, na.rm = TRUE), NA),
+              max_alt = ifelse(altitudecol != "", max(altitude, na.rm = TRUE), NA),
+              min_alt = ifelse(altitudecol != "", min(altitude, na.rm = TRUE), NA),
               total_km = sum(DIST2, na.rm = TRUE) / 1000
     )
   
@@ -315,8 +324,7 @@ rFunction = function(data, timefilter = 5,
                      "y",
                      "geometry",
                      "lon", 
-                     "lat",
-                     "study"
+                     "lat"
   )
 
   if(keepessentials == TRUE) {

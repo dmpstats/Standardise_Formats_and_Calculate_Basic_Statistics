@@ -10,11 +10,10 @@ test_that("timefilter works", {
                       bind_kmph = FALSE,
                       bind_dist = FALSE,
                       bind_timediff = FALSE,
-                      bind_study = FALSE,
-                      idcol = NULL,
-                      altitudecol = NULL,
-                      tempcol = NULL,
-                      headingcol = NULL,
+                      idcol = "",
+                      altitudecol = "",
+                      tempcol = "",
+                      headingcol = "",
                       keepessentials = FALSE)
   expect_condition(min(mt_time_lags(actual)) > lubridate::minutes(5))
   
@@ -31,11 +30,10 @@ test_that("generated columns are binded", {
                       bind_kmph = TRUE,
                       bind_dist = TRUE,
                       bind_timediff =TRUE,
-                      bind_study = TRUE,
-                      idcol = NULL,
+                      idcol = "",
                       altitudecol = "argos.altitude",
-                      tempcol = NULL,
-                      headingcol = NULL,
+                      tempcol = "",
+                      headingcol = "",
                       keepessentials = FALSE)
   
   expectcols <- c("altitude", 
@@ -44,7 +42,6 @@ test_that("generated columns are binded", {
                   "index",
                   "x",
                   "y",
-                  "study",
                   "hour",
                   "min",
                   "secs",
@@ -73,11 +70,10 @@ test_that("alternative EPSGs can still be handled", {
                                         bind_kmph = TRUE,
                                         bind_dist = TRUE,
                                         bind_timediff =TRUE,
-                                        bind_study = TRUE,
-                                        idcol = NULL,
-                                        altitudecol = NULL,
-                                        tempcol = NULL,
-                                        headingcol = NULL,
+                                        idcol = "",
+                                        altitudecol = "",
+                                        tempcol = "",
+                                        headingcol = "",
                                         keepessentials = FALSE)
   expect_contains(colnames(actual), c("x", "y"))
   expect(all(is.double(c(actual$x, actual$y))), failure_message = "Output UTMs are non-numeric")
@@ -98,11 +94,10 @@ test_that("no IDs are removed", {
                       bind_kmph = TRUE,
                       bind_dist = TRUE,
                       bind_timediff =TRUE,
-                      bind_study = TRUE,
-                      idcol = NULL,
-                      altitudecol = NULL,
-                      tempcol = NULL,
-                      headingcol = NULL,
+                      idcol = "",
+                      altitudecol = "",
+                      tempcol = "",
+                      headingcol = "",
                       keepessentials = FALSE)
   
   expect(unique(move2::mt_track_id(test_data)) == unique(move2::mt_track_id(actual)), failure_message = "IDs in the input data are not accounted for in the output")
@@ -120,11 +115,10 @@ test_that("misnamed columns throw error message", {
                                    bind_kmph = TRUE,
                                    bind_dist = TRUE,
                                    bind_timediff =TRUE,
-                                   bind_study = TRUE,
-                                   idcol = NULL,
+                                   idcol = "",
                                    altitudecol = "THIS_IS_NOT_A_COLUMN",
-                                   tempcol = NULL,
-                                   headingcol = NULL,
+                                   tempcol = "",
+                                   headingcol = "",
                                    keepessentials = FALSE))
   
 })

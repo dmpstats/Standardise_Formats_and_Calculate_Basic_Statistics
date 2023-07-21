@@ -45,7 +45,7 @@ Move2 location object
 
 ### Settings
 
-`Filter by Time Interval` (integer): The length of interval, in minutes, to which to filter data. Must be less than 60 NULL means no filtering will take place. Defaults to 5-minute intervals. The function `move2::mt_filter_per_interval` is used for this filtering with the parameter `criterion = first`.
+`Filter by Time Interval` (integer): The length of interval, in minutes, to which to filter data. Must be less than 60. Setting this equal to 0 means no filtering will take place. Defaults to 0 (no filtering). The function `move2::mt_filter_per_interval` is used for this filtering with the parameter `criterion = first`.
 
 `Bind additional timestamp columns` (logical): Determines whether to append specific timestamp data (*hour,* *minute,* *second,* *hourmin,* and *yearmonthday*) to the output. If FALSE, this overrides *Keep Essential Columns*.
 
@@ -59,22 +59,27 @@ Move2 location object
 
 `Bind time difference` (logical): Determines whether to append a *time difference* from previous location column (units: hours).
 
-`Bind study` (logical): determines whether to append a *study name* column. This is recommended if merging with other studies later in a workflow.
+`ID Column` (character): The name of the column to be used as primary identification. Leaving this empty means the default for this dataset (imported from Movebank) will be used.
 
-`ID Column` (character): The name of the column to be used as primary identification. NULL means the default (taken from Movebank) will be used.
+`Altitude Column` (character): The name of the column containing altitude data (if any). Leaving this empty means no altitude data is available.
 
-`Altitude Column` (character): The name of the column containing altitude data (if any). NULL means no altitude data is available.
+`Temperature Column` (character): The name of the column containing temperature data (if any). Leaving this empty means no temperature data is available.
 
-`Temperature Column` (character): The name of the column containing temperature data (if any). NULL means no temperature data is available.
-
-`Heading Column` (character): The name of the column containing heading data (if any). NULL means no heading data is available.
+`Heading Column` (character): The name of the column containing heading data (if any). Leaving this emptymeans no heading data is available.
 
 `Keep Essential Columns` (logical): If TRUE, the output data contains only the following columns present: *temperature*, *heading*, *altitude*, *import_marked_outlier*, *index*, *hour*, *min*, *secs*, *hourmin*, *yearmonthday*, *gap_mins*, *kmph*, *dist_m*, *x (UTM)*, *y (UTM)*, *geometry (sf)*, *lon*, *lat*, *study*.
 
 ### Most common errors
 
--   `bind study` setting currently works only if all tracks in the data come from the same study, and if `study.id` or `study_id` is a column name in the track data. It will be unable to perform the operation if not
+-   For any `column name` settings, please ensure:
+
+    1.  That the named column is **contained within the input dataset**
+    2.  That the column name has been **spelled with complete accuracy**
+
+    or an error will be returned and processing will stop. Check the logs for the list of column names in the input dataset.
+
 -   Any `column` settings can be bugged by a column name with two (and, sometimes, one) periods: for example, 'altitude.col.xyz' could not be recognized. To solve this bug, any column containing a period must be duplicated (instead of renamed) with the new name `altutide/temperature/heading`.
+
 -   `Filter by Time Interval` must be a number of minutes. If the provided interval is greater than 60, the data will be returned with a warning.
 
 ### Null or error handling
