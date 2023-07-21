@@ -17,10 +17,10 @@ rFunction = function(data, timefilter = 5,
                      bind_kmph = TRUE,
                      bind_dist = TRUE,
                      bind_timediff = TRUE,
-                     idcol = NULL, 
-                     altitudecol = NULL, 
-                     tempcol = NULL, 
-                     headingcol = NULL, 
+                     idcol = "", 
+                     altitudecol = "", 
+                     tempcol = "", 
+                     headingcol = "", 
                      keepessentials = TRUE) {
 
 
