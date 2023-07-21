@@ -5,6 +5,7 @@ library('magrittr')
 require('lubridate')
 library('ggplot2')
 library('units')
+library('sf')
 
 # Call useful function for later
 `%!in%` <- Negate(`%in%`)
