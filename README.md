@@ -35,13 +35,11 @@ Move2 location object
 
 -   `summarystats.csv`: A summary table detailing key metrics for each ID
 
--   `times.png`: A density plot displaying the frequency of timestamps, to identify any anomalies within the dataset
+-   `times.png`: A dot-plot displaying the frequency of timestamps, to identify any anomalies/gaps within the dataset
 
 -   `distances.png`: A density plot displaying the distances travelled by each ID
 
 -   `speeds.png`: A density plot displaying the speeds travelled by each ID
-
--   `altitudes.png`: A density plot displaying the altitudes of each ID, if the data is available
 
 ### Settings
 
