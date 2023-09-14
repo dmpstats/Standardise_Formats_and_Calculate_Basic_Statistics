@@ -8,6 +8,13 @@
       "type": "INTEGER"
     },
     {
+      "id": "speedcut",
+      "name": "Upper threshold for movement speed (kmph)",
+      "description": "Use this to define an upper movement speed limit for all IDs. Any location exceeding this speed will be removed from the data..",
+      "defaultValue": 0,
+      "type": "DOUBLE"
+    },
+    {
       "id": "bind_times",
       "name": "Bind additional timestamp columns",
       "description": "Determines whether or not to bind additional timestamp columns (hour, minute, seconds etc.) to the dataset.",

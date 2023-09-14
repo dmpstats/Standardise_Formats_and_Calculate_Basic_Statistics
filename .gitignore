@@ -20,3 +20,5 @@ tests/testthat/.summarystats.csv
 tests/testthat/.summarystats.csv
 tests/testthat/.summarystats.csv
 data/raw/input5.rds
+app-configuration.json
+app-configuration.json

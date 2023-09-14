@@ -22,6 +22,7 @@ rFunction = function(data, timefilter = 5,
                      altitudecol = "", 
                      tempcol = "", 
                      headingcol = "", 
+                     speedcut = NULL,
                      keepessentials = TRUE) {
 
 
@@ -32,6 +33,61 @@ rFunction = function(data, timefilter = 5,
     return(data)
   }
   
+  # Filter to predefined intervals --------------------------------------------------
+  
+  
+  if(timefilter != 0) {
+    
+    logger.info(paste0("Filtering to bins of duration ", timefilter, " minutes"))
+    timeunit <- paste0(as.character(timefilter), " mins")
+    data %<>% mt_filter_per_interval(criterion = "first", unit = timeunit)
+    
+    logger.info("Filtering completed.")
+  }
+  
+  if(!mt_is_move2(data)) {logger.fatal("Data is no longer move2 object after filtering - can't be passed onto next MoveApp")}
+  
+  
+  
+  # Append speed and time data ------------------------------------------------------
+  
+  
+  if(bind_kmph == TRUE) {
+    logger.info("Binding speed column")
+    data$kmph <- mt_speed(data) %>%
+      units::set_units("km/h") %>%
+      as.vector() # convert to kmph
+    
+    
+    # Remove locations above speed boundary and re-calculate
+    if (!is.null(speedcut) & any(data$kmph > speedcut)) {
+      logger.warn(paste0("Some locations exceed the upper speed boundary of ", speedcut, " kmph. Removing from data"))
+      fastindex <- which(data$kmph > speedcut)
+      data <- data[-fastindex,]
+      
+      # Recalculate speeds
+      
+      logger.info("Binding updated speed column")
+      data$kmph <- mt_speed(data) %>%
+        units::set_units("km/h") %>%
+        as.vector() # convert to kmph
+    
+  }
+  if(bind_dist == TRUE) {
+    logger.info("Binding distance column")
+    data$dist_m <- as.vector(mt_distance(data))
+  }
+  if(bind_timediff == TRUE) {
+    logger.info("Binding time difference column")
+    data %<>% mutate(
+      timediff_hrs =   mt_time_lags(.) %>%
+        units::set_units("hours") %>%
+        as.vector()
+    )
+  }
+  
+
+  }
   
   # Generate optional columns --------------------------------------------------------
 
@@ -61,7 +117,7 @@ rFunction = function(data, timefilter = 5,
       data %<>% mutate(altitude = as.data.frame(data)[altitudecol]) 
     } else {
       data %<>% rename(altitude = altitudecol) 
-      data$altitude %<>% as.vector() # remove units
+      data$altitude %<>% as.numeric() # remove units
     }
     
 
@@ -154,22 +210,8 @@ rFunction = function(data, timefilter = 5,
       month = month(mt_time(data)),
       year = year(mt_time(data)),
       yearmonthday = stringr::str_replace_all(str_sub(mt_time(data), 1, 10), "-", ""),
-      gap_mins = difftime(mt_time(data), lag(mt_time(data)), units = "mins"))  
+      gap_mins = mt_time_lags(.))  
   
-  
-  # Filter to predefined intervals --------------------------------------------------
-  
-  
-  if(timefilter != 0) {
-
-    logger.info(paste0("Filtering to bins of duration ", timefilter, " minutes"))
-    timeunit <- paste0(as.character(timefilter), " mins")
-    data %<>% mt_filter_per_interval(criterion = "first", unit = timeunit)
-
-    logger.info("Filtering completed.")
-  }
-  
-  if(!mt_is_move2(data)) {logger.fatal("Data is no longer move2 object after filtering - can't be passed onto next MoveApp")}
   
 
   # Append UTM data --------------------------------------------------------------
@@ -214,26 +256,7 @@ rFunction = function(data, timefilter = 5,
   
   if(!mt_is_move2(data)) {logger.fatal("Data is no longer move2 object after UTM data appending - can't be passed onto next MoveApp")}
 
-  
-  # Append speeds and final data ------------------------------------------------------
-  
-  
-  if(bind_kmph == TRUE) {
-    logger.info("Binding speed column")
-    data$kmph <- mt_speed(data) %>%
-      units::set_units("km/h") %>%
-      as.vector() # convert to kmph
-  }
-  if(bind_dist == TRUE) {
-    logger.info("Binding distance column")
-    data$dist_m <- as.vector(mt_distance(data))
-  }
-  if(bind_timediff == TRUE) {
-    logger.info("Binding time difference column")
-    data %<>% mutate(
-      timediff_hrs =   as.numeric(difftime(mt_time(data), lag(mt_time(data), default = mt_time(data)[1]), units = "hours"))
-    )
-  }
+
   
   # Generate summary stats and plots ---------------------------------------------------
   
