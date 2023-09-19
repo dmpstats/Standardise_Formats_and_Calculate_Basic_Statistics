@@ -3,15 +3,16 @@
 
 {
     "timefilter": 5,
+    "speedcut": 100,
     "bind_times": true,
     "createUTMs": true,
-    "EPSG": 32733,
+    "EPSG": 32737,
     "bind_kmph": true,
     "bind_dist": true,
     "bind_timediff": true,
     "idcol": "",
-    "altitudecol": "",
+    "altitudecol": "height_raw",
     "tempcol": "",
-    "headingcol": "",
+    "headingcol": "heading",
     "keepessentials": true
 }

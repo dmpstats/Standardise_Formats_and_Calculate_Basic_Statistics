@@ -3,21 +3,21 @@
     {
       "id": "timefilter",
       "name": "Filter by Time Interval (minutes)",
-      "description": "Determines the size of the interval (minutes) that the input data should be thinned to. Leaving this setting blank means no filtering takes place.",
+      "description": "The length of interval, in minutes, to which to filter data. Must be between 0 and 60. Leave blank for no filtering.",
       "defaultValue": 0,
       "type": "INTEGER"
     },
     {
       "id": "speedcut",
       "name": "Upper threshold for movement speed (kmph)",
-      "description": "Use this to define an upper movement speed limit for all IDs. Any location exceeding this speed will be removed from the data..",
+      "description": "The highest acceptable movement speed for all IDs (units: km/h). Any location with a speed exceeding this value will be removed as an outlier.",
       "defaultValue": 0,
       "type": "DOUBLE"
     },
     {
       "id": "bind_times",
       "name": "Bind additional timestamp columns",
-      "description": "Determines whether or not to bind additional timestamp columns (hour, minute, seconds etc.) to the dataset.",
+      "description": "Determines whether to append specific timestamp data (*hour,* *minute,* *second,* *hourmin,* and *yearmonthday*) to the output.",
       "defaultValue": true,
       "type": "CHECKBOX"
     },
@@ -38,14 +38,14 @@
     {
       "id": "createUTMs",
       "name": "Bind UTM location data",
-      "description": "Determines whether or not to generate and append UTM (Universal Transverse Mercator) data.",
+      "description": "Determines whether to generate and append Universal Transverse Mercator (UTM) data to the output. If TRUE, the primary geometry will become UTM data. NOTE: This will also remove points without any attached geometry.",
       "defaultValue": true,
       "type": "CHECKBOX"
     },
     {
       "id": "EPSG",
       "name": "Provide EPSG code for UTM coordinates",
-      "description": "Please provide a valid EPSG code if 'createUTMs' (above) is selected. Defaults to EPSG:32733.",
+      "description": "If *Bind UTM location data* is selected, please provide a valid EPSG code for the transformed coordinate system. Defaults to EPSG:32733 (UTM zone 33S)",
       "defaultValue": 32733,
       "type": "INTEGER"
     },
@@ -66,28 +66,28 @@
     {
       "id": "altitudecol",
       "name": "Name of altitude column",
-      "description": "Insert the name of the column containing altitude data (if any). If left blank, an empty column is created.",
+      "description": "The name of the column containing altitude data (if any). The column must already be contained within the input dataset. Leaving blank generates an empty altitude column. ",
       "defaultValue": "",
       "type": "STRING"
     },
     {
       "id": "tempcol",
       "name": "Name of temperature column",
-      "description": "Insert the name of the column containing temperature data in celsius (if any). If left blank, an empty column is created.",
+      "description": "The name of the column containing temperature data (if any). The column must already be contained within the input dataset. Leaving this empty generates an empty temperature column. ",
       "defaultValue": "",
       "type": "STRING"
     },
     {
       "id": "headingcol",
       "name": "Name of heading column",
-      "description": "Insert the name of the column containing heading data in degrees (if any). If left blank, an empty column is created.",
+      "description": "The name of the column containing heading data (if any). The column must already be contained within the input dataset. Leaving this empty generates an empty heading column.",
       "defaultValue": "",
       "type": "STRING"
     },
     {
       "id": "keepessentials",
       "name": "Keep only essential columns",
-      "description": "Determines whether or not keep only columns relevant to later steps of the cluster-detection workflow.",
+      "description": "If TRUE, the output data contains only the following columns (but not all, depending on which settings above are used): *temperature*, *heading*, *altitude*, *import_marked_outlier*, *index*, *hour*, *min*, *secs*, *hourmin*, *yearmonthday*, *gap_mins*, *kmph*, *dist_m*, *x (UTM)*, *y (UTM)*, *geometry (sf)*, *lon*, *lat*, *study*.",
       "defaultValue": true,
       "type": "CHECKBOX"
     }

@@ -43,9 +43,11 @@ Move2 location object
 
 ### Settings
 
-`Filter by Time Interval` (integer): The length of interval, in minutes, to which to filter data. Must be less than 60. Setting this equal to 0 means no filtering will take place. Defaults to 0 (no filtering). The function `move2::mt_filter_per_interval` is used for this filtering with the parameter `criterion = first`.
+`Filter by Time Interval` (integer): The length of interval, in minutes, to which to filter data. Must be between 0 and 60. Setting this equal to 0 means no filtering will take place. Defaults to 0 (no filtering). The function `move2::mt_filter_per_interval` is used for this filtering with the parameter `criterion = first`.
 
-`Bind additional timestamp columns` (logical): Determines whether to append specific timestamp data (*hour,* *minute,* *second,* *hourmin,* and *yearmonthday*) to the output. If FALSE, this overrides *Keep Essential Columns*.
+`Upper Threshold for Movement Speed` (numeric): The highest acceptable movement speed for all IDs (units: km/h). Any location with a speed exceeding this value will be removed as an outlier. 
+
+`Bind additional timestamp columns` (logical): Determines whether to append specific timestamp data (*hour,* *minute,* *second,* *hourmin,* and *yearmonthday*) to the output. 
 
 `Bind UTM location data` (logical): Determines whether to generate and append Universal Transverse Mercator (UTM) data to the output. If TRUE, the primary geometry will become UTM data. NOTE: This will also remove points without any attached geometry.
 
@@ -57,15 +59,15 @@ Move2 location object
 
 `Bind time difference` (logical): Determines whether to append a *time difference* from previous location column (units: hours).
 
-`ID Column` (character): The name of the column to be used as primary identification. Leaving this empty means the default for this dataset (imported from Movebank) will be used.
+`ID Column` (character): Insert the name of the column to be used as primary identification. If no column is named, the default identifier column defined within Movebank (or alternative data source) remains the primary identifier.
 
-`Altitude Column` (character): The name of the column containing altitude data (if any). Leaving this empty means no altitude data is available.
+`Altitude Column` (character): The name of the column containing altitude data (if any). The column must already be contained within the input dataset. Leaving this empty generates an empty altitude column. 
 
-`Temperature Column` (character): The name of the column containing temperature data (if any). Leaving this empty means no temperature data is available.
+`Temperature Column` (character): The name of the column containing temperature data (if any). The column must already be contained within the input dataset. Leaving this empty generates an empty temp column. 
 
-`Heading Column` (character): The name of the column containing heading data (if any). Leaving this emptymeans no heading data is available.
+`Heading Column` (character): The name of the column containing heading data (if any). The column must already be contained within the input dataset. Leaving this empty generates an empty heading column. 
 
-`Keep Essential Columns` (logical): If TRUE, the output data contains only the following columns present: *temperature*, *heading*, *altitude*, *import_marked_outlier*, *index*, *hour*, *min*, *secs*, *hourmin*, *yearmonthday*, *gap_mins*, *kmph*, *dist_m*, *x (UTM)*, *y (UTM)*, *geometry (sf)*, *lon*, *lat*, *study*.
+`Keep Essential Columns` (logical): If TRUE, the output data contains only the following columns (but not all, depending on which settings above are used): *temperature*, *heading*, *altitude*, *import_marked_outlier*, *index*, *hour*, *min*, *secs*, *hourmin*, *yearmonthday*, *gap_mins*, *kmph*, *dist_m*, *x (UTM)*, *y (UTM)*, *geometry (sf)*, *lon*, *lat*, *study*.
 
 ### Most common errors
 
