@@ -22,3 +22,5 @@ tests/testthat/.summarystats.csv
 data/raw/input5.rds
 app-configuration.json
 app-configuration.json
+data/raw/input6.rds
+data/raw/AVulture_cleaned.rds

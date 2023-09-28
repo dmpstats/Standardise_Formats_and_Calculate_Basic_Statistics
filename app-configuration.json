@@ -6,13 +6,13 @@
     "speedcut": 100,
     "bind_times": true,
     "createUTMs": true,
-    "EPSG": 32737,
+    "EPSG": 32733,
     "bind_kmph": true,
     "bind_dist": true,
     "bind_timediff": true,
     "idcol": "",
-    "altitudecol": "height_raw",
-    "tempcol": "",
+    "altitudecol": "height_above_ellipsoid",
+    "tempcol": "eobs_temperature",
     "headingcol": "heading",
     "keepessentials": true
 }

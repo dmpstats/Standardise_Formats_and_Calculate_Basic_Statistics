@@ -210,7 +210,7 @@ rFunction = function(data, timefilter = 5,
       month = month(mt_time(data)),
       year = year(mt_time(data)),
       yearmonthday = stringr::str_replace_all(str_sub(mt_time(data), 1, 10), "-", ""),
-      gap_mins = mt_time_lags(.))  
+      gap_mins = mt_time_lags(.) %>% units::set_units("minutes"))  
   
   
 
