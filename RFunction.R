@@ -7,8 +7,10 @@ library('ggplot2')
 library('units')
 library('sf')
 
+
 # Call useful function for later
 `%!in%` <- Negate(`%in%`)
+not_null <- Negate(is.null)
 
 # MoveApp settings
 rFunction = function(data, 
@@ -68,7 +70,7 @@ rFunction = function(data,
     
     
     # Remove locations above speed boundary and re-calculate
-    if (!is.null(speedcut) & any(data$kmph > speedcut)) {
+    if (not_null(speedcut) & any(data$kmph > speedcut)) {
       logger.warn(paste0("Some locations exceed the upper speed boundary of ", speedcut, " kmph. Removing from data"))
       fastindex <- which(data$kmph > speedcut)
       data <- data[-fastindex,]
@@ -88,7 +90,7 @@ rFunction = function(data,
   if(bind_timediff == TRUE) {
     logger.info("Binding time difference column")
     data %<>% mutate(
-      timediff_hrs =   mt_time_lags(.) %>%
+      timediff_hrs = mt_time_lags(.) %>%
         units::set_units("hours") %>%
         as.vector()
     )
@@ -119,7 +121,7 @@ rFunction = function(data,
   if(altitudecol == "") {
     data %<>% dplyr::mutate(altitude = NA)
   } else {
-
+    
     # If altitude is present, rename the column
     if(grepl("\\.", altitudecol)) { # solves bug involving periods and .json file transfer
       data %<>% mutate(altitude = as.data.frame(data)[altitudecol]) 
@@ -326,7 +328,7 @@ rFunction = function(data,
 
   if(bind_kmph == TRUE) {
     png(appArtifactPath("speeds.png"))
-    adjData <-data %>% filter(kmph < quantile(data$kmph, 0.9, na.rm = TRUE)) 
+    adjData <- data %>% filter(kmph < quantile(data$kmph, 0.9, na.rm = TRUE)) 
     speeds <- ggplot(adjData, 
                      aes(x = kmph, fill = mt_track_id(adjData))) + 
       facet_wrap(~ mt_track_id(adjData)) +
