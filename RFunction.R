@@ -29,8 +29,8 @@ rFunction = function(data,
 
   # Check inputs ---------------------------------------------------------------------
   
-  if(timefilter > 60) {
-    logger.fatal("Time interval for filtering is too large. Please provide a valid number of minutes in the range 0 < t < 60. Returning data")
+  if(timefilter < 0 & timefilter > 60) {
+    logger.fatal("Time interval for filtering is outside the accepted range. Please provide a valid number of minutes in the range 0 < t < 60. Returning data") # BC: maybe throw an error instead?
     return(data)
   }
   
