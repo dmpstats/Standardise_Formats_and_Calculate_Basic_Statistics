@@ -82,11 +82,15 @@ rFunction = function(data,
         units::set_units("km/h") %>%
         as.vector() # convert to kmph
     
+    }
   }
+  
+  
   if(bind_dist == TRUE) {
     logger.info("Binding distance column")
     data$dist_m <- as.vector(mt_distance(data))
   }
+  
   if(bind_timediff == TRUE) {
     logger.info("Binding time difference column")
     data %<>% mutate(
@@ -94,9 +98,6 @@ rFunction = function(data,
         units::set_units("hours") %>%
         as.vector()
     )
-  }
-  
-
   }
   
   # Generate optional columns --------------------------------------------------------
