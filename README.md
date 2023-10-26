@@ -2,7 +2,9 @@
 
 MoveApps
 
-Github repository: *github.com/callumjclarke/Standardise_Formats_and_Calculate_Basic_Statistics*
+Github repository:
+<https://github.com/dmpstats/Standardise_Formats_and_Calculate_Basic_Statistics>
+
 
 ## Description
 
