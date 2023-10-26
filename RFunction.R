@@ -130,8 +130,6 @@ rFunction = function(data,
       data %<>% rename(altitude = altitudecol) 
       data$altitude %<>% as.numeric() # remove units
     }
-    
-
   }
   
   
@@ -220,8 +218,8 @@ rFunction = function(data,
       day = day(mt_time(data)),
       month = month(mt_time(data)),
       year = year(mt_time(data)),
-      yearmonthday = stringr::str_replace_all(str_sub(mt_time(data), 1, 10), "-", ""),
-      gap_mins = mt_time_lags(.) %>% units::set_units("minutes"))  
+      yearmonthday = stringr::str_replace_all(str_sub(mt_time(data), 1, 10), "-", "")
+    )  
   
   
 
