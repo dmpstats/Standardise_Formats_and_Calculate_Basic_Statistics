@@ -11,18 +11,19 @@ library('sf')
 `%!in%` <- Negate(`%in%`)
 
 # MoveApp settings
-rFunction = function(data, timefilter = 5, 
+rFunction = function(data, 
+                     timefilter = 5, 
                      bind_times = TRUE, 
+                     bind_timediff = TRUE,
+                     bind_dist = TRUE,
+                     bind_kmph = TRUE,
+                     speedcut = NULL,
                      createUTMs = TRUE,
                      EPSG = 32733,
-                     bind_kmph = TRUE,
-                     bind_dist = TRUE,
-                     bind_timediff = TRUE,
                      idcol = "", 
                      altitudecol = "", 
                      tempcol = "", 
                      headingcol = "", 
-                     speedcut = NULL,
                      keepessentials = TRUE) {
 
 
