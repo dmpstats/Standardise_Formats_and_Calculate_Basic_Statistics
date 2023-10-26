@@ -34,6 +34,13 @@ rFunction = function(data,
     return(data)
   }
   
+  # assert validity of EPSG
+  if(createUTMs){
+    if(is.na(sf::st_crs(EPSG))){
+      stop("Can't find the Coordinate Reference System for the provided `EPSG` code", call. = FALSE)
+    }
+  }
+  
   # Filter to predefined intervals --------------------------------------------------
   
   
