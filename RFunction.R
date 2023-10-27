@@ -31,6 +31,14 @@ rFunction = function(data,
 
   # Check inputs ---------------------------------------------------------------------
   
+  # Assert that CRS is set
+  if(is.na(sf::st_crs(data))){
+    stop(
+      "App requires input data with a specified Coordinate Reference System.", 
+      call. = FALSE)
+  }
+  
+  
   if(timefilter < 0 & timefilter > 60) {
     logger.fatal("Time interval for filtering is outside the accepted range. Please provide a valid number of minutes in the range 0 < t < 60. Returning data") # BC: maybe throw an error instead?
     return(data)
