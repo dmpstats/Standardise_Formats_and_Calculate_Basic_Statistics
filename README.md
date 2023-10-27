@@ -60,6 +60,7 @@ Move2 location object
 
 `Bind UTM location data` (logical): Determines whether to generate and append Universal Transverse Mercator (UTM) data to the output. If TRUE, the primary geometry will become UTM data. NOTE: This will also remove points without any attached geometry. Default: `TRUE`.
 
+`EPSG` (integer): If *Bind UTM location data* is selected, a valid EPSG code for the transformed coordinate system. Defaults to EPSG:32733 (UTM zone 33S).
 
 `ID Column` (character): Name of the column in the input data to reset as primary identification. If no column is named, the default identifier column defined within Movebank (or alternative data source) remains the primary identifier.
 
