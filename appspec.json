@@ -3,35 +3,35 @@
     {
       "id": "timefilter",
       "name": "Filter by Time Interval (minutes)",
-      "description": "The length of interval, in minutes, to which to filter data. Must be between 0 and 60. Leave blank for no filtering.",
+      "description": "The length of interval, in minutes, to which to filter data. Must be between 0 (no filtering) and 60.",
       "defaultValue": 0,
       "type": "INTEGER"
     },
     {
-      "id": "speedcut",
-      "name": "Upper threshold for movement speed (kmph)",
-      "description": "The highest acceptable movement speed for all IDs (units: km/h). Any location with a speed exceeding this value will be removed as an outlier.",
-      "defaultValue": 0,
-      "type": "DOUBLE"
-    },
-    {
       "id": "bind_times",
       "name": "Bind additional timestamp columns",
-      "description": "Determines whether to append specific timestamp data (*hour,* *minute,* *second,* *hourmin,* and *yearmonthday*) to the output.",
+      "description": "Determines whether to append specific timestamp data (e.g. `hour`, `min`, `secs`, `hourmin`, `day`, `yearmonthday`) to the output.",
       "defaultValue": true,
       "type": "CHECKBOX"
     },
     {
-      "id": "bind_kmph",
-      "name": "Bind speed column",
-      "description": "Determines whether or not to bind a 'speed' column (units: km/h).",
+      "id": "bind_timediff",
+      "name": "Bind 'time difference' column",
+      "description": "Determines whether or not to bind a column named `timediff_hrs`, providing the lag between consecutive locations, in decimal hours.",
       "defaultValue": true,
       "type": "CHECKBOX"
     },
     {
       "id": "bind_dist",
       "name": "Bind distance travelled column",
-      "description": "Determines whether or not to bind a 'distance travelled' column (units: metres).",
+      "description": "Determines whether or not to bind a column named `dist_m`, providing the distance travelled between consecutive locations, in metres.",
+      "defaultValue": true,
+      "type": "CHECKBOX"
+    },
+    {
+      "id": "bind_kmph",
+      "name": "Bind speed column",
+      "description": "Determines whether or not to bind a column named `kmph`, providing the travelling speed between consecutive locations, km/h.",
       "defaultValue": true,
       "type": "CHECKBOX"
     },
@@ -57,37 +57,30 @@
       "type": "INTEGER"
     },
     {
-      "id": "bind_timediff",
-      "name": "Bind 'time difference' column",
-      "description": "Determines whether or not to bind a 'time difference' column (units: hours).",
-      "defaultValue": true,
-      "type": "CHECKBOX"
-    },
-    {
       "id": "idcol",
       "name": "Name of 'primary animal identifier' column",
-      "description": "Insert the name of the column to be used as primary identification. If no column is named, the default identifier column as used in Movebank remains the primary identifier.",
+      "description": "Name of the column to reset as primary identification. If no column is named, the default identifier column as used in Movebank remains the primary identifier.",
       "defaultValue": "",
       "type": "STRING"
     },
     {
       "id": "altitudecol",
       "name": "Name of altitude column",
-      "description": "The name of the column containing altitude data (if any). The column must already be contained within the input dataset. Leaving blank generates an empty altitude column. ",
+      "description": "Identify the input data column with altitude values (if any), to be renamed as `altitude`. Leaving blank generates an empty `altitude` column. ",
       "defaultValue": "",
       "type": "STRING"
     },
     {
       "id": "tempcol",
       "name": "Name of temperature column",
-      "description": "The name of the column containing temperature data (if any). The column must already be contained within the input dataset. Leaving this empty generates an empty temperature column. ",
+      "description": "Identify the input data column with temperature values (if any), to be renamed as `temperature`. Leaving this empty generates an empty `temperature` column. ",
       "defaultValue": "",
       "type": "STRING"
     },
     {
       "id": "headingcol",
       "name": "Name of heading column",
-      "description": "The name of the column containing heading data (if any). The column must already be contained within the input dataset. Leaving this empty generates an empty heading column.",
+      "description": "Identify the input data column with heading values (if any), to be renamed as `heading`. Leaving this empty generates an empty `heading` column.",
       "defaultValue": "",
       "type": "STRING"
     },
