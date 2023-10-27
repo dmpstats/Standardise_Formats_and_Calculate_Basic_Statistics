@@ -8,7 +8,7 @@ Github repository:
 
 ## Description
 
-This MoveApp contains settings to perform several basic cleaning processes and generation of extra columns of data. For example, using standardized names, binning the data to intervals of predefined duration and adding a speed column. This processing may also be useful for merging data from multiple studies of differing tag types. The user may specify any combination of the processes detailed below.
+This MoveApp contains settings to perform several basic cleaning processes and generation of extra columns of data. For example, using standardized names, thinning the data and adding a speed column. This processing may also be useful for merging data from multiple studies of differing tag types. The user may specify any combination of the processes detailed below.
 
 ## Documentation
 
