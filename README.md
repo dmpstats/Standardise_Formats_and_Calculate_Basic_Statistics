@@ -87,6 +87,6 @@ Move2 location object
 
 ### Null or error handling
 
--   `[ID/Altitude/Temp/Heading] Column`: If any of these options are left blank, the respective column is not renamed. Instead, a NA column of the desired name is appended.
+-   `[ID/Altitude/Temp/Heading] Column`: If any of these options are left blank, the respective column is not renamed. Instead, a `NA` column of the desired name is appended.
 -   `[ID/Altitude/Temp/Heading] Column`: For any of these settings, if a column name is provided but isn't found in the input dataset, a warning is provided and a NA column of the desired name is appended.
--   `EPSG`: If no EPSG code is provided, defaults to EPSG:32733 (UTM zone 33S). If the input is an invalid EPSG, transforming the coordinates will throw an error
+-   `EPSG`: If no EPSG code is provided, defaults to EPSG:32733 (UTM zone 33S). If the input is an invalid EPSG, the App will throw an error.
