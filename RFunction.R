@@ -94,10 +94,15 @@ rFunction = function(data,
   }
   
   
+  
   if(bind_dist == TRUE) {
     logger.info("Binding distance column")
-    data$dist_m <- as.vector(mt_distance(data))
+    
+    data$dist_m <- mt_distance(data) |>   
+      units::set_units("m") |>
+      as.vector()
   }
+  
   
   if(bind_timediff == TRUE) {
     logger.info("Binding time difference column")
