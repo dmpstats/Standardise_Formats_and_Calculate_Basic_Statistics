@@ -78,7 +78,8 @@ rFunction = function(data,
     # Remove locations above speed boundary and re-calculate
     if (not_null(speedcut)){
       
-      units(speedcut) <- units::as_units("km/h") |> as.vector()
+      #units(speedcut) <- units::as_units("km/h")
+      
       
       if(any(data$kmph > speedcut, na.rm = TRUE)){
         
@@ -397,4 +398,67 @@ rFunction = function(data,
   
   result <- data
   return(result)
+}
+
+
+
+
+
+
+# //////////////////////////////////////////////////////////////////////////////
+# using speed (i.e. a combination of time and location) as a proxy to identify
+# outliers in movement data (due to e.g. GPS glitches). All location events
+# associated with speeds above the user-defined threshold (given by some
+# sensible estimate of nonsensical speeds for the tagged species) asre removed
+# from the data.
+
+drop_outliers <- function(data, tresh_kmph){
+  
+  if(!mt_is_move2(data)){
+    stop("`data` must be a move2 object")
+  }
+  
+  if(!mt_is_time_ordered(data)){
+    stop("`data` must ordered by time")
+  }
+  
+  if("kmph" %!in% names(data)){
+    stop("there must be a column named `kmph` in data")
+  }
+  
+  n_start <- nrow(data)
+  
+  # counter to keep track of loop iterations
+  i <- 1
+  
+  # while loop to drop speeds above the threshold. Removals are done
+  # sequentially relative to time (data is ordered) with speed re-calculated
+  # between iterations so that offending locations are dropped in the correct order
+  while(any(data$kmph > tresh_kmph, na.rm = TRUE)){
+    
+    # find the index of the location causing the maximum speed. as data is
+    # ordered by time, we want to remove the first speed above threshold
+    fastindex <- which(data$kmph > tresh_kmph)[1] + 1 # speed is calculated relative to next location, so the outlier is in the subsequent observation 
+    # remove the guilty location
+    data <- data[-fastindex,]
+    
+    # recalculate speed
+    data$kmph <- mt_speed(data) |> set_units("km/h") |> as.vector()
+    
+    # avoid infinite looping
+    i <- i + 1
+    if(i == 10000){
+      warning("Jumping out of while loop as condition not being met within reasonable number of iterations")
+      break
+    } 
+  }
+  
+  n_end <- nrow(data)
+  n_rows_dropped <- n_start - n_end
+  
+  if(n_rows_dropped > 0){
+    logger.info(paste0("Found ", n_rows_dropped, " locations associated with speeds greater than the threshold of ", tresh_kmph, "kmph. Transgressing data points were removed."))
+  }
+  
+  data
 }
