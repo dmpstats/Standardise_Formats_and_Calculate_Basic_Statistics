@@ -101,11 +101,10 @@ rFunction = function(data,
   
   if(bind_timediff == TRUE) {
     logger.info("Binding time difference column")
-    data %<>% mutate(
-      timediff_hrs = mt_time_lags(.) %>%
-        units::set_units("hours") %>%
-        as.vector()
-    )
+    
+    data$timediff_hrs <- mt_time_lags(data) %>%
+      units::set_units("hours") %>%
+      as.vector()
   }
   
   # Generate optional columns --------------------------------------------------------
