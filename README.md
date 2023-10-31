@@ -50,7 +50,7 @@ Move2 location object
 
 `Bind additional timestamp columns` (logical): Determines whether to append specific timestamp data (*hour,* *minute,* *second,* *hourmin,* and *yearmonthday*) to the output. Default: `TRUE`.
 
-`Bind time difference` (logical): Determines whether to append a column with the *time difference* since the previous location (units: hours). Default: `TRUE`.
+`Bind time difference` (logical): Determines whether to append a column with the *time difference* to the next location (units: hours). Default: `TRUE`.
 
 `Bind distance` (logical): Determines whether to append a column with the *distance travelled* from the previous location (units: metres). Default: `TRUE`.
 
