@@ -47,12 +47,11 @@ rFunction = function(data,
   # assert validity of EPSG
   if(createUTMs){
     if(is.na(sf::st_crs(EPSG))){
-      stop("Can't find the Coordinate Reference System for the provided `EPSG` code", call. = FALSE)
+      stop("Can't find the Coordinate Reference System for the provided `EPSG` code.", call. = FALSE)
     }
   }
   
   # Filter to predefined intervals --------------------------------------------------
-  
   
   if(timefilter != 0) {
     
@@ -67,29 +66,33 @@ rFunction = function(data,
   
   
   
-  # Append speed and time data ------------------------------------------------------
-  
+  # Append speed, distance and time data ------------------------------------------------------
   
   if(bind_kmph == TRUE) {
     logger.info("Binding speed column")
+    
     data$kmph <- mt_speed(data) %>%
       units::set_units("km/h") %>%
       as.vector() # convert to kmph
     
-    
     # Remove locations above speed boundary and re-calculate
-    if (not_null(speedcut) & any(data$kmph > speedcut)) {
-      logger.warn(paste0("Some locations exceed the upper speed boundary of ", speedcut, " kmph. Removing from data"))
-      fastindex <- which(data$kmph > speedcut)
-      data <- data[-fastindex,]
+    if (not_null(speedcut)){
       
-      # Recalculate speeds
+      units(speedcut) <- units::as_units("km/h") |> as.vector()
       
-      logger.info("Binding updated speed column")
-      data$kmph <- mt_speed(data) %>%
-        units::set_units("km/h") %>%
-        as.vector() # convert to kmph
-    
+      if(any(data$kmph > speedcut, na.rm = TRUE)){
+        
+        logger.warn(paste0("Some locations exceed the upper speed boundary of ", speedcut, " kmph. Removing from data"))
+        fastindex <- which(data$kmph > speedcut)
+        data <- data[-fastindex,]
+        
+        # Recalculate speeds
+        
+        logger.info("Binding updated speed column")
+        data$kmph <- mt_speed(data) %>%
+          units::set_units("km/h") %>%
+          as.vector() # convert to kmph  
+      }
     }
   }
   
