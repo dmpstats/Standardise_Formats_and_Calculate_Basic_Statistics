@@ -42,7 +42,7 @@ test_that("`speedcut` works", {
                       headingcol = "",
                       keepessentials = FALSE)
   
-  expect_lt(max(actual$kmph, na.rm = TRUE), units::set_units(speed_thresh, "km/h"))
+  expect_lt(max(actual$kmph, na.rm = TRUE), speed_thresh)
   expect_lt(nrow(actual), nrow(test_data))
 })
 
