@@ -78,7 +78,7 @@ rFunction = function(data,
     # Remove locations above speed boundary and re-calculate
     if (not_null(speedcut)){
       
-      units(speedcut) <- units::as_units("km/h") |> as.vector()
+      #units(speedcut) <- units::as_units("km/h")
       
       if(any(data$kmph > speedcut, na.rm = TRUE)){
         
