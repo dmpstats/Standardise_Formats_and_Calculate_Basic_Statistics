@@ -170,7 +170,7 @@ test_that("App throws error if input move2 object has no CRS specified", {
 
 
 
-test_that("App throws error if specified ESPG code is non-valid", {
+test_that("App throws error if specified EPSG code is non-valid", {
 
   expect_error(
     suppressWarnings( # really not good to suppress warnings in testing, but just trying to avoid having to built a withCallingHandlers() here. The warning message is a nuisance here
