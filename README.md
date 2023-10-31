@@ -20,7 +20,7 @@ The user may select any of the following settings:
 -   Create and append columns containing: 
       - Universal Transverse Mercator (UTM) data
       - An *index* column, consisting of the animal's ID and timestamp concatenated
-      - *speed*, *distance traveled* and/or *time since previous point* data
+      - *speed*, *distance traveled* and/or *time* to next location point data
       - Specific time-related variables (hour, minute and second, independently)
 -   Standardize column names for *altitude*, *temperature* and *heading* data across studies
 
