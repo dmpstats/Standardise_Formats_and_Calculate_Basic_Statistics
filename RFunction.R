@@ -52,6 +52,9 @@ rFunction = function(data,
     }
   }
   
+  
+  logger.info("Buckle up... starting data processing")
+  
   # Filter to predefined intervals --------------------------------------------------
   
   if(timefilter != 0) {
@@ -60,7 +63,7 @@ rFunction = function(data,
     timeunit <- paste0(as.character(timefilter), " mins")
     data %<>% mt_filter_per_interval(criterion = "first", unit = timeunit)
     
-    logger.info("Filtering completed.")
+    logger.info("Filtering completed")
   }
   
   if(!mt_is_move2(data)) {logger.fatal("Data is no longer move2 object after filtering - can't be passed onto next MoveApp")}
@@ -389,6 +392,7 @@ rFunction = function(data,
   }
   
   # Return --------------------------------------------------------------------------
+  logger.info("Job completed!")
   
   result <- data
   return(result)
