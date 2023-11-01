@@ -14,7 +14,7 @@ Let’s peak at the function’s code.
 remove_outliers
 ```
 
-    function (data, kmph_tresh) 
+    function (data, kmph_thresh) 
     {
         if (!mt_is_move2(data)) 
             stop("`data` must be a move2 object")
@@ -24,8 +24,8 @@ remove_outliers
         kmph <- as.vector(set_units(mt_speed(data), "km/h"))
         i <- 1
         cli::cli_progress_bar("Sweeping")
-        while (any(kmph > kmph_tresh, na.rm = TRUE)) {
-            fastindex <- which(kmph > kmph_tresh)[1] + 1
+        while (any(kmph > kmph_thresh, na.rm = TRUE)) {
+            fastindex <- which(kmph > kmph_thresh)[1] + 1
             data <- data[-fastindex, ]
             kmph <- as.vector(set_units(mt_speed(data), "km/h"))
             i <- i + 1
@@ -39,7 +39,7 @@ remove_outliers
         n_rows_dropped <- n_start - n_end
         if (n_rows_dropped > 0) {
             logger.info(paste0("Found ", n_rows_dropped, " locations associated with speeds greater than the threshold of ", 
-                kmph_tresh, "kmph. Transgressing locations were removed"))
+                kmph_thresh, "kmph. Transgressing locations were removed"))
         }
         else {
             logger.info("No outliers detected")
@@ -95,7 +95,7 @@ dt_mv2_base
 
 ## Application to two consecutive outliers
 
-Add two outliers to the 2nd and 3rd positions and ad speeds (km/h).
+Add two outliers to the 2nd and 3rd positions and add speeds (km/h).
 
 ``` r
 dt_mv2 <- dt_mv2_base
@@ -125,7 +125,7 @@ dt_mv2
       track
     1     a
 
-Plot locations and movement
+Plot locations and movement.
 
 ``` r
 ggplot(dt_mv2) +
@@ -154,7 +154,7 @@ Remove outliers.
 
 ``` r
 dt_mv2_clean <- dt_mv2 |> 
-  remove_outliers(kmph_tresh = 150)
+  remove_outliers(kmph_thresh = 150)
 ```
 
     [INFO] Found 2 locations associated with speeds greater than the threshold of 150kmph. Transgressing locations were removed
@@ -269,7 +269,7 @@ Remove outliers & plot resultant data
 
 ``` r
 dt_mv2_sep_clean <- dt_mv2_sep |> 
-  remove_outliers(kmph_tresh = 150)
+  remove_outliers(kmph_thresh = 150)
 ```
 
     [INFO] Found 2 locations associated with speeds greater than the threshold of 150kmph. Transgressing locations were removed
@@ -434,7 +434,7 @@ Remove outliers & plot resultant data
 
 ``` r
 dt_2_mv2_clean <- dt_2_mv2 |> 
-  remove_outliers(kmph_tresh = 150)
+  remove_outliers(kmph_thresh = 150)
 ```
 
     [INFO] Found 2 locations associated with speeds greater than the threshold of 150kmph. Transgressing locations were removed
