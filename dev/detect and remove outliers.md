@@ -140,14 +140,15 @@ ggplot(dt_mv2) +
   )
 ```
 
-    Warning in st_point_on_surface.sfc(sf::st_zm(x)): st_point_on_surface may not
-    give correct results for longitude/latitude data
-
-    Warning: Removed 1 rows containing missing values (`geom_label()`).
-
-    Warning: Removed 1 rows containing missing values (`geom_curve()`).
-
-![](detect-and-remove-outliers_files/figure-commonmark/unnamed-chunk-5-1.png)
+<figure>
+<img
+src="detect-and-remove-outliers_files/figure-commonmark/fig-p1-1.png"
+id="fig-p1"
+alt="Figure 1: Points are location events, dashed arrows illustrate movement paths and labels denote movement speeds (km/h)" />
+<figcaption aria-hidden="true">Figure 1: Points are location events,
+dashed arrows illustrate movement paths and labels denote movement
+speeds (km/h)</figcaption>
+</figure>
 
 Remove outliers.
 
@@ -199,14 +200,15 @@ ggplot(dt_mv2_clean) +
   )
 ```
 
-    Warning in st_point_on_surface.sfc(sf::st_zm(x)): st_point_on_surface may not
-    give correct results for longitude/latitude data
-
-    Warning: Removed 1 rows containing missing values (`geom_label()`).
-
-    Warning: Removed 1 rows containing missing values (`geom_curve()`).
-
-![](detect-and-remove-outliers_files/figure-commonmark/unnamed-chunk-7-1.png)
+<figure>
+<img
+src="detect-and-remove-outliers_files/figure-commonmark/fig-p2-1.png"
+id="fig-p2"
+alt="Figure 2: Points are location events, dashed arrows illustrate movement paths and labels denote movement speeds (km/h)" />
+<figcaption aria-hidden="true">Figure 2: Points are location events,
+dashed arrows illustrate movement paths and labels denote movement
+speeds (km/h)</figcaption>
+</figure>
 
 ## Application to outliers in non-consecutive locations
 
@@ -238,7 +240,7 @@ dt_mv2_sep
       track
     1     a
 
-Plot locations and movement
+Plot locations and movement.
 
 ``` r
 ggplot(dt_mv2_sep) +
@@ -253,14 +255,15 @@ ggplot(dt_mv2_sep) +
   )
 ```
 
-    Warning in st_point_on_surface.sfc(sf::st_zm(x)): st_point_on_surface may not
-    give correct results for longitude/latitude data
-
-    Warning: Removed 1 rows containing missing values (`geom_label()`).
-
-    Warning: Removed 1 rows containing missing values (`geom_curve()`).
-
-![](detect-and-remove-outliers_files/figure-commonmark/unnamed-chunk-9-1.png)
+<figure>
+<img
+src="detect-and-remove-outliers_files/figure-commonmark/fig-p3-1.png"
+id="fig-p3"
+alt="Figure 3: Points are location events, dashed arrows illustrate movement paths and labels denote movement speeds (km/h)" />
+<figcaption aria-hidden="true">Figure 3: Points are location events,
+dashed arrows illustrate movement paths and labels denote movement
+speeds (km/h)</figcaption>
+</figure>
 
 Remove outliers & plot resultant data
 
@@ -308,14 +311,15 @@ ggplot(dt_mv2_sep_clean) +
   )
 ```
 
-    Warning in st_point_on_surface.sfc(sf::st_zm(x)): st_point_on_surface may not
-    give correct results for longitude/latitude data
-
-    Warning: Removed 1 rows containing missing values (`geom_label()`).
-
-    Warning: Removed 1 rows containing missing values (`geom_curve()`).
-
-![](detect-and-remove-outliers_files/figure-commonmark/unnamed-chunk-11-1.png)
+<figure>
+<img
+src="detect-and-remove-outliers_files/figure-commonmark/fig-p4-1.png"
+id="fig-p4"
+alt="Figure 4: Points are location events, dashed arrows illustrate movement paths and labels denote movement speeds (km/h)" />
+<figcaption aria-hidden="true">Figure 4: Points are location events,
+dashed arrows illustrate movement paths and labels denote movement
+speeds (km/h)</figcaption>
+</figure>
 
 ## Show that it also works for more than one animal
 
@@ -416,17 +420,15 @@ dt_2_mv2 |>
   )
 ```
 
-    Warning in st_point_on_surface.sfc(sf::st_zm(x)): st_point_on_surface may not
-    give correct results for longitude/latitude data
-
-    Warning in st_point_on_surface.sfc(sf::st_zm(x)): st_point_on_surface may not
-    give correct results for longitude/latitude data
-
-    Warning: Removed 2 rows containing missing values (`geom_label()`).
-
-    Warning: Removed 2 rows containing missing values (`geom_curve()`).
-
-![](detect-and-remove-outliers_files/figure-commonmark/unnamed-chunk-14-1.png)
+<figure>
+<img
+src="detect-and-remove-outliers_files/figure-commonmark/fig-p5-1.png"
+id="fig-p5"
+alt="Figure 5: Points are location events, dashed arrows illustrate movement paths and labels denote movement speeds (km/h)" />
+<figcaption aria-hidden="true">Figure 5: Points are location events,
+dashed arrows illustrate movement paths and labels denote movement
+speeds (km/h)</figcaption>
+</figure>
 
 Remove outliers & plot resultant data
 
@@ -482,14 +484,12 @@ dt_2_mv2_clean |>
   )
 ```
 
-    Warning in st_point_on_surface.sfc(sf::st_zm(x)): st_point_on_surface may not
-    give correct results for longitude/latitude data
-
-    Warning in st_point_on_surface.sfc(sf::st_zm(x)): st_point_on_surface may not
-    give correct results for longitude/latitude data
-
-    Warning: Removed 2 rows containing missing values (`geom_label()`).
-
-    Warning: Removed 2 rows containing missing values (`geom_curve()`).
-
-![](detect-and-remove-outliers_files/figure-commonmark/unnamed-chunk-16-1.png)
+<figure>
+<img
+src="detect-and-remove-outliers_files/figure-commonmark/fig-p6-1.png"
+id="fig-p6"
+alt="Figure 6: Points are location events, dashed arrows illustrate movement paths and labels denote movement speeds (km/h)" />
+<figcaption aria-hidden="true">Figure 6: Points are location events,
+dashed arrows illustrate movement paths and labels denote movement
+speeds (km/h)</figcaption>
+</figure>

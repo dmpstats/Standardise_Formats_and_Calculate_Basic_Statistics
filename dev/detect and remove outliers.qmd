@@ -1,5 +1,7 @@
 ---
-format: gfm
+format:
+  gfm: default
+  html: default
 ---
 
 # Function `remove_outliers()`: detect and remove outliers based on speed
@@ -74,6 +76,11 @@ dt_mv2
 
 Plot locations and movement
 ```{r}
+#| warning: false
+#| fig-cap-location: top
+#| fig-cap: Points are location events, dashed arrows illustrate movement paths and labels denote movement speeds (km/h)
+#| label: fig-p1
+
 ggplot(dt_mv2) +
   geom_sf(col = "red", size = 3) +
   geom_sf_label(aes(label = round(kmph, 1)), nudge_x = 0.8, size = 2.5) +
@@ -100,6 +107,11 @@ dt_mv2_clean
 Plot resultant data
 
 ```{r}
+#| warning: false
+#| fig-cap-location: top
+#| fig-cap: Points are location events, dashed arrows illustrate movement paths and labels denote movement speeds (km/h)
+#| label: fig-p2
+
 ggplot(dt_mv2_clean) +
   geom_sf(col = "red", size = 3) +
   geom_sf_label(aes(label = round(kmph, 1)), nudge_x = 0.04, nudge_y = -0.04, size = 2.5) +
@@ -122,8 +134,12 @@ dt_mv2_sep$kmph <- mt_speed(dt_mv2_sep) |> set_units("km/h") |> as.vector()
 dt_mv2_sep
 ```
 
-Plot locations and movement
+Plot locations and movement.
 ```{r}
+#| warning: false
+#| fig-cap-location: top
+#| fig-cap: Points are location events, dashed arrows illustrate movement paths and labels denote movement speeds (km/h)
+#| label: fig-p3
 ggplot(dt_mv2_sep) +
   geom_sf(col = "red", size = 3) +
   geom_sf_label(aes(label = round(kmph, 1)), nudge_x = 2, size = 2.5) +
@@ -147,6 +163,10 @@ dt_mv2_sep_clean |>
 
 
 ```{r}
+#| warning: false
+#| fig-cap-location: top
+#| fig-cap: Points are location events, dashed arrows illustrate movement paths and labels denote movement speeds (km/h)
+#| label: fig-p4
 ggplot(dt_mv2_sep_clean) +
   geom_sf(col = "red", size = 3) +
   geom_sf_label(aes(label = round(kmph, 1)), nudge_x = 0.04, nudge_y = -0.04, size = 2.5) +
@@ -197,6 +217,11 @@ dt_2_mv2
 
 Plot locations and movements
 ```{r}
+#| warning: false
+#| fig-cap-location: top
+#| fig-cap: Points are location events, dashed arrows illustrate movement paths and labels denote movement speeds (km/h)
+#| label: fig-p5
+
 endpoints <- as_tibble(st_coordinates(dt_2_mv2)) |> 
   mutate(track = dt_2_mv2$track) |> 
   mutate(x_end = lead(X), y_end = lead(Y), .by = track)
@@ -229,6 +254,10 @@ dt_2_mv2_clean
 
 
 ```{r}
+#| warning: false
+#| fig-cap-location: top
+#| fig-cap: Points are location events, dashed arrows illustrate movement paths and labels denote movement speeds (km/h)
+#| label: fig-p6
 endpoints <- as_tibble(st_coordinates(dt_2_mv2_clean)) |> 
   mutate(track = dt_2_mv2_clean$track) |> 
   mutate(x_end = lead(X), y_end = lead(Y), .by = track)
