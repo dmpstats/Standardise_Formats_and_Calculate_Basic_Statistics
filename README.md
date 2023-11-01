@@ -56,8 +56,6 @@ Move2 location object
 
 `Bind speed` (logical): Determines whether to append a speed column (units: km/h).
 
-`Upper Threshold for Movement Speed` (numeric): The highest acceptable movement speed for all IDs (units: km/h). Any location with a speed exceeding this value will be removed as an outlier. 
-
 `Bind UTM location data` (logical): Determines whether to generate and append Universal Transverse Mercator (UTM) data to the output. If TRUE, the primary geometry will become UTM data. NOTE: This will also remove points without any attached geometry. Default: `TRUE`.
 
 `EPSG` (integer): If *Bind UTM location data* is selected, a valid EPSG code for the transformed coordinate system. Defaults to EPSG:32733 (UTM zone 33S).
@@ -69,6 +67,9 @@ Move2 location object
 `Temperature Column` (character): Column name of the input data containing temperature data (if any). The column must already be contained within the input dataset. Leaving this empty generates an empty `temperature` column. 
 
 `Heading Column` (character): Column name of the input data containing heading data (if any). The column must already be contained within the input dataset. Leaving this empty generates an empty `heading` column. 
+
+`Upper Threshold for Movement Speed` (numeric): Outlier detection based on highest acceptable speeds (units: km/h). Any location with a speed exceeding this value will be removed as an outlier. Default: `NULL`, i.e. outliers detection and removal step is skipped.
+
 
 `Keep Essential Columns` (logical): If TRUE, the output data contains only the following columns (but not all, depending on which settings above are used): *temperature*, *heading*, *altitude*, *import_marked_outlier*, *index*, *hour*, *min*, *secs*, *hourmin*, *yearmonthday*, *gap_mins*, *kmph*, *dist_m*, *x (UTM)*, *y (UTM)*, *geometry (sf)*, *lon*, *lat*, *study*.
 
