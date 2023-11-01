@@ -19,14 +19,15 @@ rFunction = function(data,
                      bind_timediff = TRUE,
                      bind_dist = TRUE,
                      bind_kmph = TRUE,
-                     speedcut = NULL,
                      createUTMs = TRUE,
                      EPSG = 32733,
                      idcol = "", 
                      altitudecol = "", 
                      tempcol = "", 
                      headingcol = "", 
-                     keepessentials = TRUE) {
+                     keepessentials = TRUE,
+                     outlier_tresh = NULL
+                     ) {
 
 
   # Check inputs ---------------------------------------------------------------------
@@ -66,6 +67,15 @@ rFunction = function(data,
   
   
   
+  # Detect and remove outliers (locations above speed threshold)  ----------------
+  
+  if (not_null(outlier_tresh)){
+    logger.info("Detecting and removing potential outliers...")
+    #units(outlier_tresh) <- units::as_units("km/h")
+    data <- data |>  remove_outliers(kmph_tresh = outlier_tresh)
+  }
+  
+  
   # Append speed, distance and time data ------------------------------------------------------
   
   if(bind_kmph == TRUE) {
@@ -75,29 +85,7 @@ rFunction = function(data,
       units::set_units("km/h") %>%
       as.vector() # convert to kmph
     
-    # Remove locations above speed boundary and re-calculate
-    if (not_null(speedcut)){
-      
-      #units(speedcut) <- units::as_units("km/h")
-      
-      
-      if(any(data$kmph > speedcut, na.rm = TRUE)){
-        
-        logger.warn(paste0("Some locations exceed the upper speed boundary of ", speedcut, " kmph. Removing from data"))
-        fastindex <- which(data$kmph > speedcut)
-        data <- data[-fastindex,]
-        
-        # Recalculate speeds
-        
-        logger.info("Binding updated speed column")
-        data$kmph <- mt_speed(data) %>%
-          units::set_units("km/h") %>%
-          as.vector() # convert to kmph  
-      }
-    }
   }
-  
-  
   
   if(bind_dist == TRUE) {
     logger.info("Binding distance column")
@@ -409,56 +397,57 @@ rFunction = function(data,
 # using speed (i.e. a combination of time and location) as a proxy to identify
 # outliers in movement data (due to e.g. GPS glitches). All location events
 # associated with speeds above the user-defined threshold (given by some
-# sensible estimate of nonsensical speeds for the tagged species) asre removed
+# sensible estimate of abnormal speeds for the tagged species) asre removed
 # from the data.
 
-drop_outliers <- function(data, tresh_kmph){
+remove_outliers <- function(data, kmph_tresh){
   
-  if(!mt_is_move2(data)){
-    stop("`data` must be a move2 object")
-  }
-  
-  if(!mt_is_time_ordered(data)){
-    stop("`data` must ordered by time")
-  }
-  
-  if("kmph" %!in% names(data)){
-    stop("there must be a column named `kmph` in data")
-  }
+  if(!mt_is_move2(data))  stop("`data` must be a move2 object")
+  if(!mt_is_time_ordered(data)) stop("`data` must ordered by time")
   
   n_start <- nrow(data)
   
+  # compute initial speeds
+  kmph <- mt_speed(data) |> set_units("km/h") |> as.vector()  
+
   # counter to keep track of loop iterations
   i <- 1
   
-  # while loop to drop speeds above the threshold. Removals are done
-  # sequentially relative to time (data is ordered) with speed re-calculated
-  # between iterations so that offending locations are dropped in the correct order
-  while(any(data$kmph > tresh_kmph, na.rm = TRUE)){
+  cli::cli_progress_bar("Sweeping")
+  # `while` loop to drop speeds above the threshold. Removals are done
+  # iteratively relative to time (i.e chronologically) with speeds re-calculated
+  # between iterations so that offending locations are dropped in the right
+  # order
+  while(any(kmph > kmph_tresh, na.rm = TRUE)){
     
-    # find the index of the location causing the maximum speed. as data is
-    # ordered by time, we want to remove the first speed above threshold
-    fastindex <- which(data$kmph > tresh_kmph)[1] + 1 # speed is calculated relative to next location, so the outlier is in the subsequent observation 
+    # find the index of the location causing the 1st offending speed.
+    # `mt_speed()` calculates speed to next location, so the offending location
+    # (i.e. outlier) is in the subsequent entry
+    fastindex <- which(kmph > kmph_tresh)[1] + 1 
     # remove the guilty location
     data <- data[-fastindex,]
     
     # recalculate speed
-    data$kmph <- mt_speed(data) |> set_units("km/h") |> as.vector()
+    kmph <- mt_speed(data) |> set_units("km/h") |> as.vector()
     
     # avoid infinite looping
     i <- i + 1
-    if(i == 10000){
+    if(i == 1e6){
       warning("Jumping out of while loop as condition not being met within reasonable number of iterations")
       break
     } 
+    
+    cli::cli_progress_update()
   }
   
   n_end <- nrow(data)
   n_rows_dropped <- n_start - n_end
   
   if(n_rows_dropped > 0){
-    logger.info(paste0("Found ", n_rows_dropped, " locations associated with speeds greater than the threshold of ", tresh_kmph, "kmph. Transgressing data points were removed."))
+    logger.info(paste0("Found ", n_rows_dropped, " locations associated with speeds greater than the threshold of ", kmph_tresh, "kmph. Transgressing locations were removed"))
+  }else{
+    logger.info("No outliers detected")
   }
   
-  data
+  return(data)
 }
