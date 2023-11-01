@@ -65,7 +65,7 @@ dt_mv2_base
 
 ## Application to two consecutive outliers
 
-Add two outliers to the 2nd and 3rd positions and ad speeds (km/h).
+Add two outliers to the 2nd and 3rd positions and add speeds (km/h).
 
 ```{r}
 dt_mv2 <- dt_mv2_base
@@ -96,7 +96,7 @@ ggplot(dt_mv2) +
 Remove outliers.
 ```{r}
 dt_mv2_clean <- dt_mv2 |> 
-  remove_outliers(kmph_tresh = 150)
+  remove_outliers(kmph_thresh = 150)
 
 dt_mv2_clean <- dt_mv2_clean |> 
   mutate(kmph = mt_speed(dt_mv2_clean) |> set_units("km/h") |> as.vector())
@@ -155,7 +155,7 @@ ggplot(dt_mv2_sep) +
 Remove outliers & plot resultant data
 ```{r}
 dt_mv2_sep_clean <- dt_mv2_sep |> 
-  remove_outliers(kmph_tresh = 150)
+  remove_outliers(kmph_thresh = 150)
 
 dt_mv2_sep_clean |> 
   mutate(kmph = mt_speed(dt_mv2_sep_clean) |> set_units("km/h") |> as.vector())
@@ -244,7 +244,7 @@ dt_2_mv2 |>
 Remove outliers & plot resultant data
 ```{r}
 dt_2_mv2_clean <- dt_2_mv2 |> 
-  remove_outliers(kmph_tresh = 150)
+  remove_outliers(kmph_thresh = 150)
 
 dt_2_mv2_clean <- dt_2_mv2_clean |> 
   mutate(kmph = mt_speed(dt_2_mv2_clean) |> set_units("km/h") |> as.vector())

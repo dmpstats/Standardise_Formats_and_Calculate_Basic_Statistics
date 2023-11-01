@@ -60,7 +60,7 @@ test_that("outlier detection and removal works", {
                       tempcol = "",
                       headingcol = "",
                       keepessentials = TRUE,
-                      outlier_tresh = 150)
+                      outlier_thresh = 150)
   
   expect_lt(max(actual$kmph, na.rm = TRUE), 150)
   expect_equal(nrow(actual), 8)
@@ -77,7 +77,7 @@ test_that("outlier detection and removal works", {
                       tempcol = "",
                       headingcol = "",
                       keepessentials = FALSE,
-                      outlier_tresh = 50)
+                      outlier_thresh = 50)
   
   expect_lt(max(actual$kmph, na.rm = TRUE), 50)
   expect_equal(nrow(actual), nrow(test_data) - 25)

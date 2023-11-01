@@ -13,6 +13,6 @@
     "altitudecol": "",
     "tempcol": "",
     "headingcol": "",
-    "outlier_tresh": 100,
+    "outlier_thresh": 70,
     "keepessentials": true
 }

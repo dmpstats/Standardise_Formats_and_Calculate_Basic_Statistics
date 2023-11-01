@@ -26,7 +26,7 @@ rFunction = function(data,
                      tempcol = "", 
                      headingcol = "", 
                      keepessentials = TRUE,
-                     outlier_tresh = NULL
+                     outlier_thresh = NULL
                      ) {
 
 
@@ -72,10 +72,10 @@ rFunction = function(data,
   
   # Detect and remove outliers (locations above speed threshold)  ----------------
   
-  if (not_null(outlier_tresh)){
+  if (not_null(outlier_thresh)){
     logger.info("Detecting and removing potential outliers...")
-    #units(outlier_tresh) <- units::as_units("km/h")
-    data <- data |>  remove_outliers(kmph_tresh = outlier_tresh)
+    #units(outlier_thresh) <- units::as_units("km/h")
+    data <- data |>  remove_outliers(kmph_thresh = outlier_thresh)
   }
   
   
@@ -410,7 +410,7 @@ rFunction = function(data,
 # sensible estimate of abnormal speeds for the tagged species) asre removed
 # from the data.
 
-remove_outliers <- function(data, kmph_tresh){
+remove_outliers <- function(data, kmph_thresh){
   
   if(!mt_is_move2(data))  stop("`data` must be a move2 object")
   if(!mt_is_time_ordered(data)) stop("`data` must ordered by time")
@@ -428,12 +428,12 @@ remove_outliers <- function(data, kmph_tresh){
   # iteratively relative to time (i.e chronologically) with speeds re-calculated
   # between iterations so that offending locations are dropped in the right
   # order
-  while(any(kmph > kmph_tresh, na.rm = TRUE)){
+  while(any(kmph > kmph_thresh, na.rm = TRUE)){
     
     # find the index of the location causing the 1st offending speed.
     # `mt_speed()` calculates speed to next location, so the offending location
     # (i.e. outlier) is in the subsequent entry
-    fastindex <- which(kmph > kmph_tresh)[1] + 1 
+    fastindex <- which(kmph > kmph_thresh)[1] + 1 
     # remove the guilty location
     data <- data[-fastindex,]
     
@@ -454,7 +454,7 @@ remove_outliers <- function(data, kmph_tresh){
   n_rows_dropped <- n_start - n_end
   
   if(n_rows_dropped > 0){
-    logger.info(paste0("Found ", n_rows_dropped, " locations associated with speeds greater than the threshold of ", kmph_tresh, "kmph. Transgressing locations were removed"))
+    logger.info(paste0("Found ", n_rows_dropped, " locations associated with speeds greater than the threshold of ", kmph_thresh, "kmph. Transgressing locations were removed"))
   }else{
     logger.info("No outliers detected")
   }

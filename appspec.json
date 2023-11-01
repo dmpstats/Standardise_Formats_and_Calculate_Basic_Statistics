@@ -78,7 +78,7 @@
       "type": "STRING"
     },
     {
-      "id": "outlier_tresh",
+      "id": "outlier_thresh",
       "name": "Upper threshold for movement speed (km/h)",
       "description": "Outlier detection based on highest acceptable speeds (units: km/h). Any location with a speed exceeding this value will be removed as an outlier. Leave blank to skip outliers detection and removal step.",
       "defaultValue": null,
