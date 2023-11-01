@@ -14,7 +14,7 @@ not_null <- Negate(is.null)
 
 # MoveApp settings
 rFunction = function(data, 
-                     timefilter = 5, 
+                     timefilter = 0, 
                      bind_times = TRUE, 
                      bind_timediff = TRUE,
                      bind_dist = TRUE,

@@ -2,7 +2,7 @@
 // appspec.json
 
 {
-    "timefilter": 5,
+    "timefilter": 0,
     "bind_times": true,
     "createUTMs": true,
     "EPSG": 32733,
