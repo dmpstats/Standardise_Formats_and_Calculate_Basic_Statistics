@@ -273,77 +273,83 @@ rFunction = function(data,
   
   # Generate summary stats and plots ---------------------------------------------------
   
-
   logger.info("Plotting and summarising")
-
-  # Summary table by ID:
-  summarystats <- data %>%
-    bind_cols(
-      ID2 = mt_track_id(.),
-      TIME2 = mt_time(.),
-      TIMEDIFF2 = mt_time_lags(.),
-      SPEED2 = mt_speed(.),
-      DIST2 = mt_distance(.) %>% as.vector()) %>%
-    as.data.frame() %>%
-    group_by(ID2) %>%
-    summarise(first_obs = min(TIME2, na.rm = TRUE),
-              last_obs = max(TIME2, na.rm = TRUE),
-              total_obs = n(),
-              max_kmph = max(SPEED2, na.rm = TRUE),
-              mean_kmph = mean(SPEED2, na.rm = TRUE),
-              med_kmph = median(SPEED2, na.rm = TRUE),
-              max_gap_mins = max(TIMEDIFF2, na.rm = TRUE),
-              max_alt = ifelse(altitudecol != "", max(altitude, na.rm = TRUE), NA),
-              min_alt = ifelse(altitudecol != "", min(altitude, na.rm = TRUE), NA),
-              total_km = sum(DIST2, na.rm = TRUE) / 1000
-    )
   
-  write.csv(summarystats, file = appArtifactPath("summarystats.csv"))
-
-
-  # Generate density plots:
-  
-  png(appArtifactPath("times.png"))
-  times <- ggplot(data, aes(x = mt_time(data), y = factor(mt_track_id(data)))) +
-    geom_point() +
-    xlab("timestamp") +
-    ylab("trackID") +
-    ggtitle("Location timestamps by ID") +
-    theme_bw() +
-    scale_x_datetime(
-      date_labels = "%Y (%b)") 
-  print(times)
-  dev.off()
-  
-  if (bind_dist == TRUE) {
-    png(appArtifactPath("distances.png"))
-    adjData <- data %>% filter(dist_m < quantile(data$dist_m, 0.9, na.rm = TRUE)) 
-    dists <- ggplot(adjData, 
-                    aes(x = dist_m, fill = mt_track_id(adjData))) +
-      facet_wrap(~ mt_track_id(adjData)) +
-      geom_density(alpha = 0.4)+
-      xlab("Distance travelled (m)") +
-      ggtitle("Distribution of Distance Travelled by ID (up to 95th percentile)") +
-      guides(fill=guide_legend(title="Track ID"))
-    print(dists)
+  if(nrow(data) > 1){
+    
+    # Summary table by ID:
+    summarystats <- data %>%
+      bind_cols(
+        ID2 = mt_track_id(.),
+        TIME2 = mt_time(.),
+        TIMEDIFF2 = mt_time_lags(.),
+        SPEED2 = mt_speed(.),
+        DIST2 = mt_distance(.) %>% as.vector()) %>%
+      as.data.frame() %>%
+      group_by(ID2) %>%
+      summarise(first_obs = min(TIME2, na.rm = TRUE),
+                last_obs = max(TIME2, na.rm = TRUE),
+                total_obs = n(),
+                max_kmph = max(SPEED2, na.rm = TRUE),
+                mean_kmph = mean(SPEED2, na.rm = TRUE),
+                med_kmph = median(SPEED2, na.rm = TRUE),
+                max_gap_mins = max(TIMEDIFF2, na.rm = TRUE),
+                max_alt = ifelse(altitudecol != "", max(altitude, na.rm = TRUE), NA),
+                min_alt = ifelse(altitudecol != "", min(altitude, na.rm = TRUE), NA),
+                total_km = sum(DIST2, na.rm = TRUE) / 1000
+      )
+    
+    write.csv(summarystats, file = appArtifactPath("summarystats.csv"))
+    
+    
+    # Generate density plots:
+    
+    png(appArtifactPath("times.png"))
+    times <- ggplot(data, aes(x = mt_time(data), y = factor(mt_track_id(data)))) +
+      geom_point() +
+      xlab("timestamp") +
+      ylab("trackID") +
+      ggtitle("Location timestamps by ID") +
+      theme_bw() +
+      scale_x_datetime(
+        date_labels = "%Y (%b)") 
+    print(times)
     dev.off()
+    
+    if (bind_dist == TRUE) {
+      png(appArtifactPath("distances.png"))
+      adjData <- data %>% filter(dist_m < quantile(data$dist_m, 0.9, na.rm = TRUE)) 
+      dists <- ggplot(adjData, 
+                      aes(x = dist_m, fill = mt_track_id(adjData))) +
+        facet_wrap(~ mt_track_id(adjData)) +
+        geom_density(alpha = 0.4)+
+        xlab("Distance travelled (m)") +
+        ggtitle("Distribution of Distance Travelled by ID (up to 95th percentile)") +
+        guides(fill=guide_legend(title="Track ID"))
+      print(dists)
+      dev.off()
+    }
+    
+    if(bind_kmph == TRUE) {
+      png(appArtifactPath("speeds.png"))
+      adjData <- data %>% filter(kmph < quantile(data$kmph, 0.9, na.rm = TRUE)) 
+      speeds <- ggplot(adjData, 
+                       aes(x = kmph, fill = mt_track_id(adjData))) + 
+        facet_wrap(~ mt_track_id(adjData)) +
+        geom_density(alpha = 0.4) +
+        ggtitle("Distribution of speed by ID (up to 95th percentile)") +
+        xlab("Speed (km/h)") +
+        guides(fill=guide_legend(title="Track ID"))
+      print(speeds)
+      dev.off()
+    }
+    
+  }else{
+    warning("nrow(data) <= 1 after all processing steps applied. Skipping the creation of diagnostic plots.")
   }
-
-  if(bind_kmph == TRUE) {
-    png(appArtifactPath("speeds.png"))
-    adjData <- data %>% filter(kmph < quantile(data$kmph, 0.9, na.rm = TRUE)) 
-    speeds <- ggplot(adjData, 
-                     aes(x = kmph, fill = mt_track_id(adjData))) + 
-      facet_wrap(~ mt_track_id(adjData)) +
-      geom_density(alpha = 0.4) +
-      ggtitle("Distribution of speed by ID (up to 95th percentile)") +
-      xlab("Speed (km/h)") +
-      guides(fill=guide_legend(title="Track ID"))
-    print(speeds)
-    dev.off()
-  }
-
-
+  
+  
+  
   
 
   # Select only essential columns --------------------------------------------------------
