@@ -418,7 +418,7 @@ remove_outliers <- function(data, kmph_thresh){
   n_start <- nrow(data)
   
   # compute initial speeds
-  kmph <- mt_speed(data) |> set_units("km/h") |> as.vector()  
+  kmph <- mt_speed(data) |> units::set_units("km/h") |> as.vector()  
 
   # counter to keep track of loop iterations
   i <- 1
@@ -438,7 +438,7 @@ remove_outliers <- function(data, kmph_thresh){
     data <- data[-fastindex,]
     
     # recalculate speed
-    kmph <- mt_speed(data) |> set_units("km/h") |> as.vector()
+    kmph <- mt_speed(data) |> units::set_units("km/h") |> as.vector()
     
     # avoid infinite looping
     i <- i + 1
