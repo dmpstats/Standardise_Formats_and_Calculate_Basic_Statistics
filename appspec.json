@@ -36,13 +36,6 @@
       "type": "CHECKBOX"
     },
     {
-      "id": "speedcut",
-      "name": "Upper threshold for movement speed (kmph)",
-      "description": "The highest acceptable movement speed for all IDs (units: km/h). Any location with a speed exceeding this value will be removed as an outlier. Requires 'Bind speed column' option to be selected.",
-      "defaultValue": null,
-      "type": "DOUBLE"
-    },
-    {
       "id": "createUTMs",
       "name": "Bind UTM location data",
       "description": "Determines whether to generate and append Universal Transverse Mercator (UTM) data to the output. If TRUE, the primary geometry will become UTM data. NOTE: This will also remove points without any attached geometry.",
@@ -85,6 +78,13 @@
       "type": "STRING"
     },
     {
+      "id": "outlier_thresh",
+      "name": "Upper threshold for movement speed (km/h)",
+      "description": "Outlier detection based on highest acceptable speeds (units: km/h). Any location with a speed exceeding this value will be removed as an outlier. Leave blank to skip outliers detection and removal step.",
+      "defaultValue": null,
+      "type": "DOUBLE"
+    },
+    {
       "id": "keepessentials",
       "name": "Keep only essential columns",
       "description": "If TRUE, the output data contains only the following columns (but not all, depending on which settings above are used): `temperature`, `heading`, `altitude`, `import_marked_outlier`, `index`, `hour`, `min`, `secs`, `hourmin`, `yearmonthday`, `gap_mins`, `kmph`, `dist_m`, `x` (UTM), `y` (UTM), `geometry` (sf), `lon`, `lat`, `study`.",
@@ -118,6 +118,9 @@
       },
       {
         "name": "sf"
+      },
+      {
+        "name": "cli"
       }
     ]
   },

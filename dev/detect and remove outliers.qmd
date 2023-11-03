@@ -1,0 +1,358 @@
+---
+format:
+  gfm: default
+---
+
+# Function `remove_outliers()`: detect and remove outliers based on speed
+
+This is a function developed to identify and remove outliers from GPS data using
+speed as the detecting metric. Speed is a good metric for outlier detection as
+it expresses distance covered given elapsed time, therefore highlighting
+instances of erroneous movement caused by sensor malfunctions. Here we have a
+close look at the function developed to perform this task.
+
+```{r}
+#| include: false
+#| warning: false
+#| message: false
+
+library(dplyr)
+library(ggplot2)
+library(move2)
+library(sf)
+library(units)
+
+source("../RFunction.R")
+source(file.path("../src/common/logger.R"))
+
+input1 <- readRDS("../data/raw/input1.rds")
+input2 <- readRDS("../data/raw/input2.rds")
+
+```
+
+
+Let's peak at the function's code.
+```{r}
+remove_outliers
+```
+
+
+Generate mock base data.
+```{r}
+n <- 10
+dt <- data.frame(
+  x = seq(30.01, 31.02, length.out = n), 
+  y = seq(2.01, 3.02, length.out = n),
+  time = seq.POSIXt(
+    as.POSIXct("2023-01-01 00:00:00 UTC"),
+    as.POSIXct("2023-01-01 01:30:00 UTC"), 
+    length.out = n
+  ), 
+  track = "a"
+)
+
+dt_mv2_base <- mt_as_move2(
+  dt,
+  coords = c("x", "y"), 
+  time_column = "time",
+  track_id_column = "track") |> 
+  sf::st_set_crs(4326L)
+
+dt_mv2_base
+```
+
+
+
+## Application to two consecutive outliers
+
+Add two outliers to the 2nd and 3rd positions and add speeds (km/h).
+
+```{r}
+dt_mv2 <- dt_mv2_base
+st_geometry(dt_mv2)[c(2, 3)] <- st_sfc(st_point(c(12.11, 13.12)), st_point(c(12.4, 13.45)))
+dt_mv2$kmph <- mt_speed(dt_mv2) |> set_units("km/h") |> as.vector()
+dt_mv2
+```
+
+#### Plot locations and movement
+```{r}
+#| warning: false
+#| fig-cap-location: margin
+#| fig-cap: Points are location events, dashed arrows illustrate movement paths and labels denote movement speeds (km/h)
+#| label: fig-p1
+
+ggplot(dt_mv2) +
+  geom_sf(col = "red", size = 3) +
+  geom_sf_label(aes(label = round(kmph, 1)), nudge_x = 0.8, size = 2.5) +
+  geom_curve(
+    aes(x = X, y = Y, xend = lead(X), yend = lead(Y)), 
+    data = as_tibble(st_coordinates(dt_mv2)),
+    curvature = -0.3,
+    arrow = arrow(length = unit(0.02, "npc"), type = "closed"),
+    linetype = "dashed"
+  )
+```
+
+
+
+#### Remove outliers
+
+```{r}
+dt_mv2_clean <- dt_mv2 |> 
+  remove_outliers(kmph_thresh = 150)
+
+dt_mv2_clean <- dt_mv2_clean |> 
+  mutate(kmph = mt_speed(dt_mv2_clean) |> set_units("km/h") |> as.vector())
+```
+
+Cleaned data and number of data entries removed
+```{r}
+dt_mv2_clean
+nrow(dt_mv2) - nrow(dt_mv2_clean)
+```
+
+#### Plot resultant data
+
+```{r}
+#| warning: false
+#| fig-cap-location: margin
+#| fig-cap: Points are location events, dashed arrows illustrate movement paths and labels denote movement speeds (km/h)
+#| label: fig-p2
+
+ggplot(dt_mv2_clean) +
+  geom_sf(col = "red", size = 3) +
+  geom_sf_label(aes(label = round(kmph, 1)), nudge_x = 0.04, nudge_y = -0.04, size = 2.5) +
+  geom_curve(
+    aes(x = X, y = Y, xend = lead(X), yend = lead(Y)), 
+    data = as_tibble(st_coordinates(dt_mv2_clean)),
+    curvature = -0.3,
+    arrow = arrow(length = unit(0.02, "npc"), type = "closed"),
+    linetype = "dashed"
+  )
+```
+
+
+
+## Application to outliers in non-consecutive locations
+```{r}
+dt_mv2_sep <- dt_mv2_base
+st_geometry(dt_mv2_sep)[c(2, 7)] <- st_sfc(st_point(c(16.11, 16.12)), st_point(c(48.4, 13.45)))
+dt_mv2_sep$kmph <- mt_speed(dt_mv2_sep) |> set_units("km/h") |> as.vector()
+dt_mv2_sep
+```
+
+#### Plot locations and movement
+```{r}
+#| warning: false
+#| fig-cap-location: margin
+#| fig-cap: Points are location events, dashed arrows illustrate movement paths and labels denote movement speeds (km/h)
+#| label: fig-p3
+ggplot(dt_mv2_sep) +
+  geom_sf(col = "red", size = 3) +
+  geom_sf_label(aes(label = round(kmph, 1)), nudge_x = 2, size = 2.5) +
+  geom_curve(
+    aes(x = X, y = Y, xend = lead(X), yend = lead(Y)), 
+    data = as_tibble(st_coordinates(dt_mv2_sep)),
+    curvature = -0.3,
+    arrow = arrow(length = unit(0.02, "npc"), type = "closed"),
+    linetype = "dashed"
+  )
+```
+
+####  Remove outliers & plot resultant data
+```{r}
+dt_mv2_sep_clean <- dt_mv2_sep |> 
+  remove_outliers(kmph_thresh = 150)
+
+dt_mv2_sep_clean |> 
+  mutate(kmph = mt_speed(dt_mv2_sep_clean) |> set_units("km/h") |> as.vector())
+```
+
+
+```{r}
+#| warning: false
+#| fig-cap-location: margin
+#| fig-cap: Points are location events, dashed arrows illustrate movement paths and labels denote movement speeds (km/h)
+#| label: fig-p4
+ggplot(dt_mv2_sep_clean) +
+  geom_sf(col = "red", size = 3) +
+  geom_sf_label(aes(label = round(kmph, 1)), nudge_x = 0.04, nudge_y = -0.04, size = 2.5) +
+  geom_curve(
+    aes(x = X, y = Y, xend = lead(X), yend = lead(Y)), 
+    data = as_tibble(st_coordinates(dt_mv2_sep_clean)),
+    curvature = -0.3,
+    arrow = arrow(length = unit(0.02, "npc"), type = "closed"),
+    linetype = "dashed"
+  )
+```
+
+
+## Show that it also works for more than one animal
+
+```{r}
+n <- 10
+dt_2 <- data.frame(
+  x = seq(30.01, 31.02, length.out = n), 
+  y = seq(2.01, 3.02, length.out = n),
+  time = seq.POSIXt(
+    as.POSIXct("2023-01-01 00:00:00 UTC"),
+    as.POSIXct("2023-01-01 01:30:00 UTC"), 
+    length.out = n
+  ), 
+  track = c(rep("a", floor(n/2)), rep("b", ceiling(n/2)))
+) |> 
+  mutate(
+    x = ifelse(track == "b", x + 2, x),
+    y = ifelse(track == "b", y - 3, y)
+  )
+
+dt_2_mv2 <- mt_as_move2(
+  dt_2,
+  coords = c("x", "y"), 
+  time_column = "time",
+  track_id_column = "track") |> 
+  sf::st_set_crs(4326L)
+
+dt_2_mv2
+```
+
+```{r}
+st_geometry(dt_2_mv2)[c(2, 8)] <- st_sfc(st_point(c(12.11, 13.12)), st_point(c(20.4, -2)))
+dt_2_mv2$kmph <- mt_speed(dt_2_mv2) |> set_units("km/h") |> as.vector()
+dt_2_mv2
+```
+
+#### Plot locations and movements
+```{r}
+#| warning: false
+#| fig-cap-location: margin
+#| fig-cap: Points are location events, dashed arrows illustrate movement paths and labels denote movement speeds (km/h)
+#| label: fig-p5
+
+endpoints <- as_tibble(st_coordinates(dt_2_mv2)) |> 
+  mutate(track = dt_2_mv2$track) |> 
+  mutate(x_end = lead(X), y_end = lead(Y), .by = track)
+
+dt_2_mv2 |> 
+  ggplot(aes(group = track, col = track)) +
+  geom_sf(size = 2) +
+  geom_sf_label(aes(label = round(kmph, 1)), nudge_x = 2, size = 2.5) +
+  geom_curve(
+    aes(x = X, y = Y, xend = x_end, yend = y_end, group = track), 
+    data = endpoints,
+    curvature = -0.2,
+    arrow = arrow(length = unit(0.02, "npc"), type = "closed"),
+    linetype = "dashed"
+  )
+```
+
+
+
+#### Remove outliers & plot resultant data
+
+```{r}
+dt_2_mv2_clean <- dt_2_mv2 |> 
+  remove_outliers(kmph_thresh = 150)
+
+dt_2_mv2_clean <- dt_2_mv2_clean |> 
+  mutate(kmph = mt_speed(dt_2_mv2_clean) |> set_units("km/h") |> as.vector())
+
+dt_2_mv2_clean
+```
+
+
+```{r}
+#| warning: false
+#| fig-cap-location: margin
+#| fig-cap: Points are location events, dashed arrows illustrate movement paths and labels denote movement speeds (km/h)
+#| label: fig-p6
+endpoints <- as_tibble(st_coordinates(dt_2_mv2_clean)) |> 
+  mutate(track = dt_2_mv2_clean$track) |> 
+  mutate(x_end = lead(X), y_end = lead(Y), .by = track)
+
+dt_2_mv2_clean |> 
+  ggplot(aes(group = track, col = track)) +
+  geom_sf(size = 2) +
+  geom_sf_label(aes(label = round(kmph, 1)), nudge_x = 0.04, nudge_y = -0.04, size = 2.5) +
+  geom_curve(
+    aes(x = X, y = Y, xend = x_end, yend = y_end, group = track), 
+    data = endpoints,
+    curvature = -0.2,
+    arrow = arrow(length = unit(0.02, "npc"), type = "closed"),
+    linetype = "dashed"
+  )
+```
+
+
+
+
+
+
+<!-- 
+
+# Code to add example of errors in previous code, if we feel the need to illustrate issues
+
+# mock testset 
+n <- 10
+dt <- data.frame(
+  x = seq(30.01, 31.02, length.out = n), 
+  y = seq(2.01, 3.02, length.out = n),
+  time = seq.POSIXt(
+    as.POSIXct("2023-01-01 00:00:00 UTC"),
+    as.POSIXct("2023-01-01 01:30:00 UTC"), 
+    length.out = n
+  ), 
+  track = "a"
+)
+
+mock <- mt_as_move2(
+  dt,
+  coords = c("x", "y"), 
+  time_column = "time",
+  track_id_column = "track") |> 
+  sf::st_set_crs(4326L)
+
+# modify to add outliers
+st_geometry(mock)[c(2, 3)] <- st_sfc(st_point(c(12.11, 13.12)), st_point(c(12.4, 13.45)))
+
+mock
+
+# wrapper function omn old cold by Callum
+old_remover <- function(data, kmph_thresh){
+  
+  data$kmph <- mt_speed(data) %>%
+    units::set_units("km/h") %>%
+    as.vector() # convert to kmph
+  
+  # Remove locations above speed boundary and re-calculate
+  if (any(data$kmph > kmph_thresh)) {
+    
+    fastindex <- which(data$kmph > kmph_thresh)
+    data <- data[-fastindex,]
+    
+    # Recalculate speeds
+    data$kmph <- mt_speed(data) %>%
+      units::set_units("km/h") %>%
+      as.vector() # convert to kmph 
+  }
+  data
+}
+
+old_remover(mock, 150)
+remove_outliers(mock, 150) %>% mutate(kmph = mt_speed(.) |> set_units("km/h"))
+
+
+old_remover(mock, 300)
+remove_outliers(mock, 300) %>% mutate(kmph = mt_speed(.) |> set_units("km/h"))
+
+
+
+
+st_geometry(mock)[c(2, 6)] <- st_sfc(st_point(c(12.11, 13.12)), st_point(c(12.4, 13.45)))
+mock |> mutate(kmph = mt_speed(mock) |> set_units("km/h"))
+  
+old_remover(mock, 300)
+remove_outliers(mock, 300)
+
+-->
+  

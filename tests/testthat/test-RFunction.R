@@ -1,6 +1,8 @@
 library(units)
+library(sf)
 
 test_data <- test_data("input3.rds")
+
 
 test_that("timefilter works", {
   
@@ -23,27 +25,62 @@ test_that("timefilter works", {
 
 
 
-test_that("`speedcut` works", {
+test_that("outlier detection and removal works", {
   
-  speed_thresh <- 100
+  # mock testset
+  n <- 10
+  dt <- data.frame(
+    x = seq(30.01, 31.02, length.out = n), 
+    y = seq(2.01, 3.02, length.out = n),
+    time = seq.POSIXt(
+      as.POSIXct("2023-01-01 00:00:00 UTC"),
+      as.POSIXct("2023-01-01 01:30:00 UTC"), 
+      length.out = n
+    ), 
+    track = "a"
+  )
   
-  actual <- rFunction(data = test_data, 
-                      timefilter = 5,
-                      bind_times = FALSE,
+  mock <- mt_as_move2(
+    dt,
+    coords = c("x", "y"), 
+    time_column = "time",
+    track_id_column = "track") |> 
+    sf::st_set_crs(4326L)
+  
+  # modify to add outliers
+  st_geometry(mock)[c(2, 3)] <- st_sfc(st_point(c(12.11, 13.12)), st_point(c(12.4, 13.45)))
+  
+  actual <- rFunction(data = mock, 
+                      bind_times = TRUE,
                       createUTMs = FALSE,
-                      EPSG = 32733,
                       bind_kmph = TRUE,
-                      speedcut = speed_thresh,
-                      bind_dist = FALSE,
                       bind_timediff =FALSE,
                       idcol = "",
                       altitudecol = "",
                       tempcol = "",
                       headingcol = "",
-                      keepessentials = FALSE)
+                      keepessentials = TRUE,
+                      outlier_thresh = 150)
   
-  expect_lt(max(actual$kmph, na.rm = TRUE), speed_thresh)
-  expect_lt(nrow(actual), nrow(test_data))
+  expect_lt(max(actual$kmph, na.rm = TRUE), 150)
+  expect_equal(nrow(actual), 8)
+  
+  # provided testset
+  actual <- rFunction(data = test_data, 
+                      timefilter = 0,
+                      bind_times = TRUE,
+                      createUTMs = FALSE,
+                      bind_kmph = TRUE,
+                      bind_timediff = TRUE,
+                      idcol = "",
+                      altitudecol = "",
+                      tempcol = "",
+                      headingcol = "",
+                      keepessentials = FALSE,
+                      outlier_thresh = 50)
+  
+  expect_lt(max(actual$kmph, na.rm = TRUE), 50)
+  expect_equal(nrow(actual), nrow(test_data) - 25)
 })
 
 
