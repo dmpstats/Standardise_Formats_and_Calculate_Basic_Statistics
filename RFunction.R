@@ -404,10 +404,10 @@ rFunction = function(data,
 
 
 # //////////////////////////////////////////////////////////////////////////////
-# using speed (i.e. a combination of time and location) as a proxy to identify
+# using speed (i.e. a combination of time and location) as a metric to identify
 # outliers in movement data (due to e.g. GPS glitches). All location events
 # associated with speeds above the user-defined threshold (given by some
-# sensible estimate of abnormal speeds for the tagged species) asre removed
+# sensible estimate of abnormal speeds for the tagged species) are removed
 # from the data.
 
 remove_outliers <- function(data, kmph_thresh){
@@ -454,7 +454,7 @@ remove_outliers <- function(data, kmph_thresh){
   n_rows_dropped <- n_start - n_end
   
   if(n_rows_dropped > 0){
-    logger.info(paste0("Found ", n_rows_dropped, " locations associated with speeds greater than the threshold of ", kmph_thresh, "kmph. Transgressing locations were removed"))
+    logger.info(paste0("Found ", n_rows_dropped, " locations associated with speeds greater than the threshold of ", kmph_thresh, "kmph. Offending locations were removed"))
   }else{
     logger.info("No outliers detected")
   }
