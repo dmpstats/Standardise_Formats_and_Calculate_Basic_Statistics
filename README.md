@@ -20,7 +20,7 @@ The user may select any of the following settings:
 -   Create and append columns containing: 
       - Universal Transverse Mercator (UTM) data
       - An *index* column, consisting of the animal's ID and timestamp concatenated
-      - *speed*, *distance traveled* and/or *time since previous point* data
+      - *speed*, *distance traveled* and/or *time* to next location point data
       - Specific time-related variables (hour, minute and second, independently)
 -   Standardize column names for *altitude*, *temperature* and *heading* data across studies
 
@@ -50,7 +50,7 @@ Move2 location object
 
 `Bind additional timestamp columns` (logical): Determines whether to append specific timestamp data (*hour,* *minute,* *second,* *hourmin,* and *yearmonthday*) to the output. Default: `TRUE`.
 
-`Bind time difference` (logical): Determines whether to append a column with the *time difference* since the previous location (units: hours). Default: `TRUE`.
+`Bind time difference` (logical): Determines whether to append a column with the *time difference* to the next location (units: hours). Default: `TRUE`.
 
 `Bind distance` (logical): Determines whether to append a column with the *distance travelled* from the previous location (units: metres). Default: `TRUE`.
 

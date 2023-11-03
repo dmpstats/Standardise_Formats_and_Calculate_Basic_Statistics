@@ -86,8 +86,7 @@ rFunction = function(data,
     
     data$kmph <- mt_speed(data) %>%
       units::set_units("km/h") %>%
-      as.vector() # convert to kmph
-    
+      as.vector() # convert to kmph    
   }
   
   if(bind_dist == TRUE) {
