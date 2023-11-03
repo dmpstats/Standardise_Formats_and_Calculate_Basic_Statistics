@@ -1,7 +1,6 @@
 ---
 format:
   gfm: default
-  html: default
 ---
 
 # Function `remove_outliers()`: detect and remove outliers based on speed
@@ -63,6 +62,7 @@ dt_mv2_base
 ```
 
 
+
 ## Application to two consecutive outliers
 
 Add two outliers to the 2nd and 3rd positions and add speeds (km/h).
@@ -74,10 +74,10 @@ dt_mv2$kmph <- mt_speed(dt_mv2) |> set_units("km/h") |> as.vector()
 dt_mv2
 ```
 
-Plot locations and movement
+#### Plot locations and movement
 ```{r}
 #| warning: false
-#| fig-cap-location: top
+#| fig-cap-location: margin
 #| fig-cap: Points are location events, dashed arrows illustrate movement paths and labels denote movement speeds (km/h)
 #| label: fig-p1
 
@@ -93,22 +93,29 @@ ggplot(dt_mv2) +
   )
 ```
 
-Remove outliers.
+
+
+#### Remove outliers
+
 ```{r}
 dt_mv2_clean <- dt_mv2 |> 
   remove_outliers(kmph_thresh = 150)
 
 dt_mv2_clean <- dt_mv2_clean |> 
   mutate(kmph = mt_speed(dt_mv2_clean) |> set_units("km/h") |> as.vector())
-
-dt_mv2_clean
 ```
 
-Plot resultant data
+Cleaned data and number of data entries removed
+```{r}
+dt_mv2_clean
+nrow(dt_mv2) - nrow(dt_mv2_clean)
+```
+
+#### Plot resultant data
 
 ```{r}
 #| warning: false
-#| fig-cap-location: top
+#| fig-cap-location: margin
 #| fig-cap: Points are location events, dashed arrows illustrate movement paths and labels denote movement speeds (km/h)
 #| label: fig-p2
 
@@ -134,10 +141,10 @@ dt_mv2_sep$kmph <- mt_speed(dt_mv2_sep) |> set_units("km/h") |> as.vector()
 dt_mv2_sep
 ```
 
-Plot locations and movement.
+#### Plot locations and movement
 ```{r}
 #| warning: false
-#| fig-cap-location: top
+#| fig-cap-location: margin
 #| fig-cap: Points are location events, dashed arrows illustrate movement paths and labels denote movement speeds (km/h)
 #| label: fig-p3
 ggplot(dt_mv2_sep) +
@@ -152,7 +159,7 @@ ggplot(dt_mv2_sep) +
   )
 ```
 
-Remove outliers & plot resultant data
+####  Remove outliers & plot resultant data
 ```{r}
 dt_mv2_sep_clean <- dt_mv2_sep |> 
   remove_outliers(kmph_thresh = 150)
@@ -164,7 +171,7 @@ dt_mv2_sep_clean |>
 
 ```{r}
 #| warning: false
-#| fig-cap-location: top
+#| fig-cap-location: margin
 #| fig-cap: Points are location events, dashed arrows illustrate movement paths and labels denote movement speeds (km/h)
 #| label: fig-p4
 ggplot(dt_mv2_sep_clean) +
@@ -215,10 +222,10 @@ dt_2_mv2$kmph <- mt_speed(dt_2_mv2) |> set_units("km/h") |> as.vector()
 dt_2_mv2
 ```
 
-Plot locations and movements
+#### Plot locations and movements
 ```{r}
 #| warning: false
-#| fig-cap-location: top
+#| fig-cap-location: margin
 #| fig-cap: Points are location events, dashed arrows illustrate movement paths and labels denote movement speeds (km/h)
 #| label: fig-p5
 
@@ -241,7 +248,8 @@ dt_2_mv2 |>
 
 
 
-Remove outliers & plot resultant data
+#### Remove outliers & plot resultant data
+
 ```{r}
 dt_2_mv2_clean <- dt_2_mv2 |> 
   remove_outliers(kmph_thresh = 150)
@@ -255,7 +263,7 @@ dt_2_mv2_clean
 
 ```{r}
 #| warning: false
-#| fig-cap-location: top
+#| fig-cap-location: margin
 #| fig-cap: Points are location events, dashed arrows illustrate movement paths and labels denote movement speeds (km/h)
 #| label: fig-p6
 endpoints <- as_tibble(st_coordinates(dt_2_mv2_clean)) |> 
@@ -274,3 +282,77 @@ dt_2_mv2_clean |>
     linetype = "dashed"
   )
 ```
+
+
+
+
+
+
+<!-- 
+
+# Code to add example of errors in previous code, if we feel the need to illustrate issues
+
+# mock testset 
+n <- 10
+dt <- data.frame(
+  x = seq(30.01, 31.02, length.out = n), 
+  y = seq(2.01, 3.02, length.out = n),
+  time = seq.POSIXt(
+    as.POSIXct("2023-01-01 00:00:00 UTC"),
+    as.POSIXct("2023-01-01 01:30:00 UTC"), 
+    length.out = n
+  ), 
+  track = "a"
+)
+
+mock <- mt_as_move2(
+  dt,
+  coords = c("x", "y"), 
+  time_column = "time",
+  track_id_column = "track") |> 
+  sf::st_set_crs(4326L)
+
+# modify to add outliers
+st_geometry(mock)[c(2, 3)] <- st_sfc(st_point(c(12.11, 13.12)), st_point(c(12.4, 13.45)))
+
+mock
+
+# wrapper function omn old cold by Callum
+old_remover <- function(data, kmph_thresh){
+  
+  data$kmph <- mt_speed(data) %>%
+    units::set_units("km/h") %>%
+    as.vector() # convert to kmph
+  
+  # Remove locations above speed boundary and re-calculate
+  if (any(data$kmph > kmph_thresh)) {
+    
+    fastindex <- which(data$kmph > kmph_thresh)
+    data <- data[-fastindex,]
+    
+    # Recalculate speeds
+    data$kmph <- mt_speed(data) %>%
+      units::set_units("km/h") %>%
+      as.vector() # convert to kmph 
+  }
+  data
+}
+
+old_remover(mock, 150)
+remove_outliers(mock, 150) %>% mutate(kmph = mt_speed(.) |> set_units("km/h"))
+
+
+old_remover(mock, 300)
+remove_outliers(mock, 300) %>% mutate(kmph = mt_speed(.) |> set_units("km/h"))
+
+
+
+
+st_geometry(mock)[c(2, 6)] <- st_sfc(st_point(c(12.11, 13.12)), st_point(c(12.4, 13.45)))
+mock |> mutate(kmph = mt_speed(mock) |> set_units("km/h"))
+  
+old_remover(mock, 300)
+remove_outliers(mock, 300)
+
+-->
+  

@@ -21,13 +21,13 @@ remove_outliers
         if (!mt_is_time_ordered(data)) 
             stop("`data` must ordered by time")
         n_start <- nrow(data)
-        kmph <- as.vector(set_units(mt_speed(data), "km/h"))
+        kmph <- as.vector(units::set_units(mt_speed(data), "km/h"))
         i <- 1
         cli::cli_progress_bar("Sweeping")
         while (any(kmph > kmph_thresh, na.rm = TRUE)) {
             fastindex <- which(kmph > kmph_thresh)[1] + 1
             data <- data[-fastindex, ]
-            kmph <- as.vector(set_units(mt_speed(data), "km/h"))
+            kmph <- as.vector(units::set_units(mt_speed(data), "km/h"))
             i <- i + 1
             if (i == 1e+06) {
                 warning("Jumping out of while loop as condition not being met within reasonable number of iterations")
@@ -39,7 +39,7 @@ remove_outliers
         n_rows_dropped <- n_start - n_end
         if (n_rows_dropped > 0) {
             logger.info(paste0("Found ", n_rows_dropped, " locations associated with speeds greater than the threshold of ", 
-                kmph_thresh, "kmph. Transgressing locations were removed"))
+                kmph_thresh, "kmph. Offending locations were removed"))
         }
         else {
             logger.info("No outliers detected")
@@ -125,7 +125,7 @@ dt_mv2
       track
     1     a
 
-Plot locations and movement.
+#### Plot locations and movement
 
 ``` r
 ggplot(dt_mv2) +
@@ -150,19 +150,23 @@ dashed arrows illustrate movement paths and labels denote movement
 speeds (km/h)</figcaption>
 </figure>
 
-Remove outliers.
+#### Remove outliers
 
 ``` r
 dt_mv2_clean <- dt_mv2 |> 
   remove_outliers(kmph_thresh = 150)
 ```
 
-    [INFO] Found 2 locations associated with speeds greater than the threshold of 150kmph. Transgressing locations were removed
+    [INFO] Found 2 locations associated with speeds greater than the threshold of 150kmph. Offending locations were removed
 
 ``` r
 dt_mv2_clean <- dt_mv2_clean |> 
   mutate(kmph = mt_speed(dt_mv2_clean) |> set_units("km/h") |> as.vector())
+```
 
+Cleaned data and number of data entries removed
+
+``` r
 dt_mv2_clean
 ```
 
@@ -185,7 +189,13 @@ dt_mv2_clean
       track
     1     a
 
-Plot resultant data
+``` r
+nrow(dt_mv2) - nrow(dt_mv2_clean)
+```
+
+    [1] 2
+
+#### Plot resultant data
 
 ``` r
 ggplot(dt_mv2_clean) +
@@ -240,7 +250,7 @@ dt_mv2_sep
       track
     1     a
 
-Plot locations and movement.
+#### Plot locations and movement
 
 ``` r
 ggplot(dt_mv2_sep) +
@@ -265,14 +275,14 @@ dashed arrows illustrate movement paths and labels denote movement
 speeds (km/h)</figcaption>
 </figure>
 
-Remove outliers & plot resultant data
+#### Remove outliers & plot resultant data
 
 ``` r
 dt_mv2_sep_clean <- dt_mv2_sep |> 
   remove_outliers(kmph_thresh = 150)
 ```
 
-    [INFO] Found 2 locations associated with speeds greater than the threshold of 150kmph. Transgressing locations were removed
+    [INFO] Found 2 locations associated with speeds greater than the threshold of 150kmph. Offending locations were removed
 
 ``` r
 dt_mv2_sep_clean |> 
@@ -400,7 +410,7 @@ dt_2_mv2
     1     a
     2     b
 
-Plot locations and movements
+#### Plot locations and movements
 
 ``` r
 endpoints <- as_tibble(st_coordinates(dt_2_mv2)) |> 
@@ -430,14 +440,14 @@ dashed arrows illustrate movement paths and labels denote movement
 speeds (km/h)</figcaption>
 </figure>
 
-Remove outliers & plot resultant data
+#### Remove outliers & plot resultant data
 
 ``` r
 dt_2_mv2_clean <- dt_2_mv2 |> 
   remove_outliers(kmph_thresh = 150)
 ```
 
-    [INFO] Found 2 locations associated with speeds greater than the threshold of 150kmph. Transgressing locations were removed
+    [INFO] Found 2 locations associated with speeds greater than the threshold of 150kmph. Offending locations were removed
 
 ``` r
 dt_2_mv2_clean <- dt_2_mv2_clean |> 
@@ -493,3 +503,71 @@ alt="Figure 6: Points are location events, dashed arrows illustrate movement pa
 dashed arrows illustrate movement paths and labels denote movement
 speeds (km/h)</figcaption>
 </figure>
+
+<!-- 
+
+# Code to add example of errors in previous code, if we feel the need to illustrate issues
+
+# mock testset 
+n <- 10
+dt <- data.frame(
+  x = seq(30.01, 31.02, length.out = n), 
+  y = seq(2.01, 3.02, length.out = n),
+  time = seq.POSIXt(
+    as.POSIXct("2023-01-01 00:00:00 UTC"),
+    as.POSIXct("2023-01-01 01:30:00 UTC"), 
+    length.out = n
+  ), 
+  track = "a"
+)
+
+mock <- mt_as_move2(
+  dt,
+  coords = c("x", "y"), 
+  time_column = "time",
+  track_id_column = "track") |> 
+  sf::st_set_crs(4326L)
+
+# modify to add outliers
+st_geometry(mock)[c(2, 3)] <- st_sfc(st_point(c(12.11, 13.12)), st_point(c(12.4, 13.45)))
+
+mock
+
+# wrapper function omn old cold by Callum
+old_remover <- function(data, kmph_thresh){
+  
+  data$kmph <- mt_speed(data) %>%
+    units::set_units("km/h") %>%
+    as.vector() # convert to kmph
+  
+  # Remove locations above speed boundary and re-calculate
+  if (any(data$kmph > kmph_thresh)) {
+    
+    fastindex <- which(data$kmph > kmph_thresh)
+    data <- data[-fastindex,]
+    
+    # Recalculate speeds
+    data$kmph <- mt_speed(data) %>%
+      units::set_units("km/h") %>%
+      as.vector() # convert to kmph 
+  }
+  data
+}
+
+old_remover(mock, 150)
+remove_outliers(mock, 150) %>% mutate(kmph = mt_speed(.) |> set_units("km/h"))
+
+
+old_remover(mock, 300)
+remove_outliers(mock, 300) %>% mutate(kmph = mt_speed(.) |> set_units("km/h"))
+
+
+
+
+st_geometry(mock)[c(2, 6)] <- st_sfc(st_point(c(12.11, 13.12)), st_point(c(12.4, 13.45)))
+mock |> mutate(kmph = mt_speed(mock) |> set_units("km/h"))
+  
+old_remover(mock, 300)
+remove_outliers(mock, 300)
+
+-->
