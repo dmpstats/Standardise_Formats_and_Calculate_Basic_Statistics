@@ -7,34 +7,51 @@ library('ggplot2')
 library('units')
 library('sf')
 
+
 # Call useful function for later
 `%!in%` <- Negate(`%in%`)
+not_null <- Negate(is.null)
 
 # MoveApp settings
-rFunction = function(data, timefilter = 5, 
+rFunction = function(data, 
+                     timefilter = 5, 
                      bind_times = TRUE, 
+                     bind_timediff = TRUE,
+                     bind_dist = TRUE,
+                     bind_kmph = TRUE,
+                     speedcut = NULL,
                      createUTMs = TRUE,
                      EPSG = 32733,
-                     bind_kmph = TRUE,
-                     bind_dist = TRUE,
-                     bind_timediff = TRUE,
                      idcol = "", 
                      altitudecol = "", 
                      tempcol = "", 
                      headingcol = "", 
-                     speedcut = NULL,
                      keepessentials = TRUE) {
 
 
   # Check inputs ---------------------------------------------------------------------
   
-  if(timefilter > 60) {
-    logger.fatal("Time interval for filtering is too large. Please provide a valid number of minutes in the range 0 < t < 60. Returning data")
+  # Assert that CRS is set
+  if(is.na(sf::st_crs(data))){
+    stop(
+      "App requires input data with a specified Coordinate Reference System.", 
+      call. = FALSE)
+  }
+  
+  
+  if(timefilter < 0 & timefilter > 60) {
+    logger.fatal("Time interval for filtering is outside the accepted range. Please provide a valid number of minutes in the range 0 < t < 60. Returning data") # BC: maybe throw an error instead?
     return(data)
   }
   
-  # Filter to predefined intervals --------------------------------------------------
+  # assert validity of EPSG
+  if(createUTMs){
+    if(is.na(sf::st_crs(EPSG))){
+      stop("Can't find the Coordinate Reference System for the provided `EPSG` code.", call. = FALSE)
+    }
+  }
   
+  # Filter to predefined intervals --------------------------------------------------
   
   if(timefilter != 0) {
     
@@ -49,44 +66,53 @@ rFunction = function(data, timefilter = 5,
   
   
   
-  # Append speed and time data ------------------------------------------------------
-  
+  # Append speed, distance and time data ------------------------------------------------------
   
   if(bind_kmph == TRUE) {
     logger.info("Binding speed column")
+    
     data$kmph <- mt_speed(data) %>%
       units::set_units("km/h") %>%
       as.vector() # convert to kmph
     
-    
     # Remove locations above speed boundary and re-calculate
-    if (!is.null(speedcut) & any(data$kmph > speedcut)) {
-      logger.warn(paste0("Some locations exceed the upper speed boundary of ", speedcut, " kmph. Removing from data"))
-      fastindex <- which(data$kmph > speedcut)
-      data <- data[-fastindex,]
+    if (not_null(speedcut)){
       
-      # Recalculate speeds
+      #units(speedcut) <- units::as_units("km/h")
       
-      logger.info("Binding updated speed column")
-      data$kmph <- mt_speed(data) %>%
-        units::set_units("km/h") %>%
-        as.vector() # convert to kmph
-    
-  }
-  if(bind_dist == TRUE) {
-    logger.info("Binding distance column")
-    data$dist_m <- as.vector(mt_distance(data))
-  }
-  if(bind_timediff == TRUE) {
-    logger.info("Binding time difference column")
-    data %<>% mutate(
-      timediff_hrs =   mt_time_lags(.) %>%
-        units::set_units("hours") %>%
-        as.vector()
-    )
+      if(any(data$kmph > speedcut, na.rm = TRUE)){
+        
+        logger.warn(paste0("Some locations exceed the upper speed boundary of ", speedcut, " kmph. Removing from data"))
+        fastindex <- which(data$kmph > speedcut)
+        data <- data[-fastindex,]
+        
+        # Recalculate speeds
+        
+        logger.info("Binding updated speed column")
+        data$kmph <- mt_speed(data) %>%
+          units::set_units("km/h") %>%
+          as.vector() # convert to kmph  
+      }
+    }
   }
   
-
+  
+  
+  if(bind_dist == TRUE) {
+    logger.info("Binding distance column")
+    
+    data$dist_m <- mt_distance(data) |>   
+      units::set_units("m") |>
+      as.vector()
+  }
+  
+  
+  if(bind_timediff == TRUE) {
+    logger.info("Binding time difference column")
+    
+    data$timediff_hrs <- mt_time_lags(data) %>%
+      units::set_units("hours") %>%
+      as.vector()
   }
   
   # Generate optional columns --------------------------------------------------------
@@ -111,7 +137,7 @@ rFunction = function(data, timefilter = 5,
   if(altitudecol == "") {
     data %<>% dplyr::mutate(altitude = NA)
   } else {
-
+    
     # If altitude is present, rename the column
     if(grepl("\\.", altitudecol)) { # solves bug involving periods and .json file transfer
       data %<>% mutate(altitude = as.data.frame(data)[altitudecol]) 
@@ -119,8 +145,6 @@ rFunction = function(data, timefilter = 5,
       data %<>% rename(altitude = altitudecol) 
       data$altitude %<>% as.numeric() # remove units
     }
-    
-
   }
   
   
@@ -209,8 +233,8 @@ rFunction = function(data, timefilter = 5,
       day = day(mt_time(data)),
       month = month(mt_time(data)),
       year = year(mt_time(data)),
-      yearmonthday = stringr::str_replace_all(str_sub(mt_time(data), 1, 10), "-", ""),
-      gap_mins = mt_time_lags(.) %>% units::set_units("minutes"))  
+      yearmonthday = stringr::str_replace_all(str_sub(mt_time(data), 1, 10), "-", "")
+    )  
   
   
 
@@ -318,7 +342,7 @@ rFunction = function(data, timefilter = 5,
 
   if(bind_kmph == TRUE) {
     png(appArtifactPath("speeds.png"))
-    adjData <-data %>% filter(kmph < quantile(data$kmph, 0.9, na.rm = TRUE)) 
+    adjData <- data %>% filter(kmph < quantile(data$kmph, 0.9, na.rm = TRUE)) 
     speeds <- ggplot(adjData, 
                      aes(x = kmph, fill = mt_track_id(adjData))) + 
       facet_wrap(~ mt_track_id(adjData)) +
