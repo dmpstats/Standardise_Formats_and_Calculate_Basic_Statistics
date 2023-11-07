@@ -377,7 +377,8 @@ rFunction = function(data,
                      "lon", 
                      "lat",
                      "sunrise_timestamp", 
-                     "sunset_timestamp"
+                     "sunset_timestamp",
+                     "acc_dt"
   )
 
   if(keepessentials == TRUE) {
