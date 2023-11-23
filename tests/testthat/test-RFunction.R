@@ -127,6 +127,21 @@ test_that("generated columns are binded", {
 }) 
 
 
+
+test_that("column renaming works as expected", {
+  
+  actual <- rFunction(data = test_data, altitudecol = "argos.altitude") |> colnames()
+  expect_contains(actual, "altitude")
+  
+  actual <- rFunction(data = test_data, tempcol = "argos.sensor.4") |> colnames()
+  expect_contains(actual, "temperature")
+  
+  actual <- rFunction(data = test_data, headingcol = "argos.nb.mes.120") |> colnames()
+  expect_contains(actual, "heading")
+  
+})
+
+
 test_that("alternative EPSGs can still be handled", {
   
   actual <- rFunction(data = test_data, 
@@ -217,3 +232,4 @@ test_that("App throws error if specified EPSG code is non-valid", {
   )
   
 })
+

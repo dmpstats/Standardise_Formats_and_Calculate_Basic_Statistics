@@ -128,43 +128,35 @@ rFunction = function(data,
   if(altitudecol == "") {
     data %<>% dplyr::mutate(altitude = NA)
   } else {
-    
-    # If altitude is present, rename the column
-    if(grepl("\\.", altitudecol)) { # solves bug involving periods and .json file transfer
-      data %<>% mutate(altitude = as.data.frame(data)[altitudecol]) 
-    } else {
-      data %<>% rename(altitude = altitudecol) 
-      data$altitude %<>% as.numeric() # remove units
-    }
+    # If alt column in input is identified, rename as 'altitude'
+    data <- data |> 
+      dplyr::rename(altitude = dplyr::all_of(altitudecol)) |> 
+      dplyr::mutate(altitude = as.numeric(altitude)) # remove units
   }
   
   
-
   # Process temperature data
   if(tempcol == "") {
     data %<>% dplyr::mutate(temperature = NA)
   } else {
+    # If temp col in input is identified, rename as 'temperature'
+    data <- data |> 
+      dplyr::rename(temperature = dplyr::all_of(tempcol)) |> 
+      dplyr::mutate(temperature = as.numeric(temperature)) # remove units
     
-    # If temperature is present, rename the column
-    if(grepl("\\.", tempcol)) { # solves bug involving periods and .json file transfer
-      data %<>% mutate(temperature = as.data.frame(data)[tempcol])
-    } else {
-      data %<>% rename(temperature = tempcol)
-      data$temperature %<>% as.vector() # remove units
-    }  }
+  }
+  
   
   # Process heading data
   if(headingcol == "") {
-    data %<>% mutate(heading = NA)
+    data %<>% dplyr::mutate(heading = NA)
   } else {
-    
-    # If heading is present, rename the column
-    if(grepl("\\.", headingcol)) { # solves bug involving periods and .json file transfer
-      data %<>% mutate(heading = as.data.frame(data)[headingcol])
-    } else {
-      data %<>% rename(heading = headingcol)
-      data$heading %<>% as.vector()
-    }  }
+    # If heading col in input is identified, rename as 'heading'
+    data <- data |> 
+      dplyr::rename(heading = dplyr::all_of(headingcol)) |> 
+      dplyr::mutate(heading = as.numeric(heading)) # remove units
+    }
+  
   
   # Define trackID 
   if(idcol != "") {
@@ -172,6 +164,7 @@ rFunction = function(data,
     mt_track_data(data)
     data <- mt_set_track_id_column(data, idcol)
   }
+  
   
   # The following is deprecated until later changes
   # Calling movebank study name requires a Movebank handle input
