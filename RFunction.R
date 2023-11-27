@@ -206,7 +206,6 @@ rFunction = function(data,
   
   # Bind time columns ----------------------------------------------------------
 
-  
   logger.info("Generating additional timestamp data")
   data <- data %>%
     dplyr::mutate(
@@ -361,7 +360,7 @@ rFunction = function(data,
                      "secs",
                      "hourmin",
                      "yearmonthday",
-                     "gap_mins",
+                     "timediff_hrs",
                      "kmph",
                      "dist_m",
                      "x",
@@ -381,7 +380,7 @@ rFunction = function(data,
 
   # Remove times if desired
   if(bind_times == FALSE) {
-    data %<>% dplyr::select(-any_of(c("hour", "min", "secs", "hourmin", "yearmonthday", "gap_mins")))
+    data %<>% dplyr::select(-any_of(c("hour", "min", "secs", "hourmin", "yearmonthday", "timediff_hrs")))
   }
   
   # Return --------------------------------------------------------------------------
