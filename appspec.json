@@ -87,7 +87,7 @@
     {
       "id": "keepessentials",
       "name": "Keep only essential columns",
-      "description": "If TRUE, the output data contains only the following columns (but not all, depending on which settings above are used): `temperature`, `heading`, `altitude`, `import_marked_outlier`, `index`, `hour`, `min`, `secs`, `hourmin`, `yearmonthday`, `gap_mins`, `kmph`, `dist_m`, `x` (UTM), `y` (UTM), `geometry` (sf), `lon`, `lat`, `study`.",
+      "description": "If TRUE, the output data comprises only a subset of essential key columns. Please refer to the App documentation for the specific list of considered columns.",
       "defaultValue": true,
       "type": "CHECKBOX"
     }
