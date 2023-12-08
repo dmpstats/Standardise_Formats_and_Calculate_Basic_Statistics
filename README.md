@@ -71,7 +71,7 @@ Move2 location object
 `Upper Threshold for Movement Speed` (numeric): Outlier detection based on highest acceptable speeds (units: km/h). Any location with a speed exceeding this value will be removed as an outlier. Default: `NULL`, i.e. outliers detection and removal step is skipped.
 
 
-`Keep Essential Columns` (logical): If TRUE, the output data contains only the following columns (but not all, depending on which settings above are used): *temperature*, *heading*, *altitude*, *import_marked_outlier*, *index*, *hour*, *min*, *secs*, *hourmin*, *yearmonthday*, *gap_mins*, *kmph*, *dist_m*, *x (UTM)*, *y (UTM)*, *geometry (sf)*, *lon*, *lat*, *study*.
+`Keep Essential Columns` (logical): If TRUE, the output data contains only the following columns (but not all, depending on which settings above are used and preceding Workflow Apps): *temperature*, *heading*, *altitude*, *import_marked_outlier*, *index*, *hour*, *min*, *secs*, *hourmin*, *yearmonthday*, *timediff_hrs*, *kmph*, *dist_m*, *geometry (sf)*, *lon*, *lat*, *sunrise_timestamp*, *sunset_timestamp*, *timestamp_local*, *local_tz*, *acc_dt*.
 
 ### Most common errors
 

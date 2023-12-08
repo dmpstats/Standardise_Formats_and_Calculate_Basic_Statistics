@@ -363,13 +363,13 @@ rFunction = function(data,
                      "timediff_hrs",
                      "kmph",
                      "dist_m",
-                     "x",
-                     "y",
                      "geometry",
                      "lon", 
                      "lat",
                      "sunrise_timestamp", 
                      "sunset_timestamp",
+                     "timestamp_local",
+                     "local_tz",
                      "acc_dt"
   )
 
