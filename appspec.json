@@ -17,7 +17,7 @@
     {
       "id": "bind_timediff",
       "name": "Bind 'time difference' column",
-      "description": "Determines whether or not to bind a column named `timediff_hrs`, providing the lag between consecutive locations, in decimal hours.",
+      "description": "Determines whether or not to bind a column named `timediff_hrs`, providing the time lag between consecutive locations, in decimal hours.",
       "defaultValue": true,
       "type": "CHECKBOX"
     },
@@ -73,14 +73,14 @@
     {
       "id": "headingcol",
       "name": "Name of heading column",
-      "description": "Identify the column name in the input data with heading values (if any), to be renamed as `heading`. Leaving this empty generates an empty `heading` column.",
+      "description": "Identify the column name in the input data with heading direction values (if any), to be renamed as `heading`. Leaving this empty generates an empty `heading` column.",
       "defaultValue": "",
       "type": "STRING"
     },
     {
       "id": "outlier_thresh",
       "name": "Upper threshold for movement speed (km/h)",
-      "description": "Outlier detection based on highest acceptable speeds (units: km/h). Any location with a speed exceeding this value will be removed as an outlier. Leave blank to skip outliers detection and removal step.",
+      "description": "The highest acceptable speed between consecutive locations (units: km/h), for speed-based outlier detection. Any location with a speed exceeding this value will be removed as an outlier. Leave blank to skip outliers detection and removal step.",
       "defaultValue": null,
       "type": "DOUBLE"
     },

@@ -46,32 +46,31 @@ Move2 location object
 
 ### Settings
 
-`Filter by Time Interval` (integer): The length of interval, in minutes, to which to filter data. Must be between 0 and 60. Setting this equal to 0 means no filtering will take place. Defaults to 0 (no filtering). The function `move2::mt_filter_per_interval` is used for this filtering with the parameter `criterion = first`.
+**Filter by Time Interval** (`timefilter`): Integer, the length of interval, in minutes, to which to filter data. Must be between 0 and 60. Setting this equal to 0 means no filtering will take place. Defaults to 0 (no filtering). The function `move2::mt_filter_per_interval` is used for this filtering with the parameter `criterion = first`.
 
-`Bind additional timestamp columns` (logical): Determines whether to append specific timestamp data (*hour,* *minute,* *second,* *hourmin,* and *yearmonthday*) to the output. Default: `TRUE`.
+**Bind additional timestamp columns** (`bind_times`): Logical, determines whether to append specific timestamp data (*hour,* *minute,* *second,* *hourmin,* and *yearmonthday*) to the output. Default: `TRUE`.
 
-`Bind time difference` (logical): Determines whether to append a column with the *time difference* to the next location (units: hours). Default: `TRUE`.
+**Bind time difference** (`bind_timediff`): Logical, determines whether to append a column with *time difference* between consecutive locations, each element giving the time lag to the next location (units: hours). Default: `TRUE`.
 
-`Bind distance` (logical): Determines whether to append a column with the *distance travelled* from the previous location (units: metres). Default: `TRUE`.
+**Bind distance** (`bind_dist`): Logical, determines whether to append a column with the *distance travelled* between consecutive locations, each element giving the distance to the next location (units: metres). Default: `TRUE`.
 
-`Bind speed` (logical): Determines whether to append a speed column (units: km/h).
+**Bind speed** (`bind_kmph`): Logical, determines whether to append a column with the *travelling speed* between consecutive locations, each element giving the speed to the next location (units: km/h). Default: `TRUE`
 
-`Bind UTM location data` (logical): Determines whether to generate and append Universal Transverse Mercator (UTM) data to the output. If TRUE, the primary geometry will become UTM data. NOTE: This will also remove points without any attached geometry. Default: `TRUE`.
+**Bind UTM location data** (`createUTMs`): Logical, determines whether to generate and append Universal Transverse Mercator (UTM) data to the output. If TRUE, the primary geometry will become UTM data. NOTE: This will also remove points without any attached geometry. Default: `TRUE`.
 
-`EPSG` (integer): If *Bind UTM location data* is selected, a valid EPSG code for the transformed coordinate system. Defaults to EPSG:32733 (UTM zone 33S).
+**EPSG** (`EPSG`): Integer, if *Bind UTM location data* is selected, a valid EPSG code for the transformed coordinate system. Defaults to EPSG:32733 (UTM zone 33S).
 
-`ID Column` (character): Name of the column in the input data to reset as primary identification. If no column is named, the default identifier column defined within Movebank (or alternative data source) remains the primary identifier.
+**ID Column** (`idcol`): Character string, the name of the column in the input data to reset as primary identification. If no column is named, the default identifier column defined within Movebank (or alternative data source) remains the primary identifier.
 
-`Altitude Column` (character): Column name of the input data containing altitude data (if any). The column must already be contained within the input dataset. Leaving this empty generates an empty `altitude` column. 
+**Altitude Column** (`altitudecol`): Character string, the name of the column in the input data with altitude values (if any), to be renamed as `altitude`. Leaving this empty generates an empty `altitude` column. 
 
-`Temperature Column` (character): Column name of the input data containing temperature data (if any). The column must already be contained within the input dataset. Leaving this empty generates an empty `temperature` column. 
+**Temperature Column** (`tempcol`): Character string, the name of the column in the input data with temperature values (if any), to be renamed as `temperature`. Leaving this empty generates an empty `temperature` column. 
 
-`Heading Column` (character): Column name of the input data containing heading data (if any). The column must already be contained within the input dataset. Leaving this empty generates an empty `heading` column. 
+**Heading Column** (`headingcol`): Character string, the name of the column in the input data with heading direction values (if any), to be renamed as `heading`. Leaving this empty generates an empty `heading` column. 
 
-`Upper Threshold for Movement Speed` (numeric): Outlier detection based on highest acceptable speeds (units: km/h). Any location with a speed exceeding this value will be removed as an outlier. Default: `NULL`, i.e. outliers detection and removal step is skipped.
+**Upper Threshold for Movement Speed** (`outlier_thresh`): Numeric, the highest acceptable speed between consecutive locations (units: km/h), for speed-based outlier detection. Any location with a speed exceeding this value will be removed as an outlier. Leaving this blank skips the detection and removal of outliers.
 
-
-`Keep Essential Columns` (logical): If TRUE, the output data contains only the following columns (but not all, depending on which settings above are used and preceding Workflow Apps): *temperature*, *heading*, *altitude*, *import_marked_outlier*, *index*, *hour*, *min*, *secs*, *hourmin*, *yearmonthday*, *timediff_hrs*, *kmph*, *dist_m*, *geometry (sf)*, *lon*, *lat*, *sunrise_timestamp*, *sunset_timestamp*, *timestamp_local*, *local_tz*, *acc_dt*.
+**Keep Essential Columns** (`keepessentials`): Logical, if TRUE, the output data contains only the following columns (but not all, depending on which settings above are used and preceding Apps in the Workflow): *temperature*, *heading*, *altitude*, *import_marked_outlier*, *index*, *hour*, *min*, *secs*, *hourmin*, *yearmonthday*, *timediff_hrs*, *kmph*, *dist_m*, *geometry (sf)*, *lon*, *lat*, *sunrise_timestamp*, *sunset_timestamp*, *timestamp_local*, *local_tz*, *acc_dt*.
 
 ### Most common errors
 
