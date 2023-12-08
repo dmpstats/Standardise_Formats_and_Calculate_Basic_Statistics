@@ -80,7 +80,7 @@
     {
       "id": "outlier_thresh",
       "name": "Upper threshold for movement speed (km/h)",
-      "description": "The highest acceptable speed between consecutive locations (units: km/h), for speed-based outlier detection. Any location with a speed exceeding this value will be removed as an outlier. Leave blank to skip outliers detection and removal step.",
+      "description": "The highest acceptable speed between consecutive locations (units: km/h), for speed-based outlier detection. Any location with a leading speed (i.e. speed from last location) above this value will be removed as an outlier. Leave blank to skip outliers detection and removal step.",
       "defaultValue": null,
       "type": "DOUBLE"
     },

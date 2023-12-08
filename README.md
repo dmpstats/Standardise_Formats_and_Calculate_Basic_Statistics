@@ -68,9 +68,11 @@ Move2 location object
 
 **Heading Column** (`headingcol`): Character string, the name of the column in the input data with heading direction values (if any), to be renamed as `heading`. Leaving this empty generates an empty `heading` column. 
 
-**Upper Threshold for Movement Speed** (`outlier_thresh`): Numeric, the highest acceptable speed between consecutive locations (units: km/h), for speed-based outlier detection. Any location with a speed exceeding this value will be removed as an outlier. Leaving this blank skips the detection and removal of outliers.
+**Upper Threshold for Movement Speed** (`outlier_thresh`): Numeric, the highest acceptable speed between consecutive locations (units: km/h), for speed-based outlier detection. Any location with a leading speed (i.e. speed from last location) above this value will be removed as an outlier. Leaving this blank skips the detection and removal of outliers.
 
 **Keep Essential Columns** (`keepessentials`): Logical, if TRUE, the output data contains only the following columns (but not all, depending on which settings above are used and preceding Apps in the Workflow): *temperature*, *heading*, *altitude*, *import_marked_outlier*, *index*, *hour*, *min*, *secs*, *hourmin*, *yearmonthday*, *timediff_hrs*, *kmph*, *dist_m*, *geometry (sf)*, *lon*, *lat*, *sunrise_timestamp*, *sunset_timestamp*, *timestamp_local*, *local_tz*, *acc_dt*.
+
+
 
 ### Most common errors
 
