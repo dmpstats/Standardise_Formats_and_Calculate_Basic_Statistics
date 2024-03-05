@@ -48,6 +48,8 @@ Move2 location object
 
 **Filter by Time Interval** (`timefilter`): Integer, the length of interval, in minutes, to which to filter data. Must be between 0 and 60. Setting this equal to 0 means no filtering will take place. Defaults to 0 (no filtering). The function `move2::mt_filter_per_interval` is used for this filtering with the parameter `criterion = first`.
 
+**Upper Threshold for Movement Speed** (`outlier_thresh`): Numeric, the highest acceptable speed between consecutive locations (units: km/h), for speed-based outlier detection. Any location with a leading speed (i.e. speed from last location) above this value will be removed as an outlier. Leaving this blank skips the detection and removal of outliers.
+
 **Bind additional timestamp columns** (`bind_times`): Logical, determines whether to append specific timestamp data (*hour,* *minute,* *second,* *hourmin,* and *yearmonthday*) to the output. Default: `TRUE`.
 
 **Bind time difference** (`bind_timediff`): Logical, determines whether to append a column with *time difference* between consecutive locations, each element giving the time lag to the next location (units: hours). Default: `TRUE`.
@@ -68,8 +70,6 @@ Move2 location object
 
 **Heading Column** (`headingcol`): Character string, the name of the column in the input data with heading direction values (if any), to be renamed as `heading`. Leaving this empty generates an empty `heading` column. 
 
-**Upper Threshold for Movement Speed** (`outlier_thresh`): Numeric, the highest acceptable speed between consecutive locations (units: km/h), for speed-based outlier detection. Any location with a leading speed (i.e. speed from last location) above this value will be removed as an outlier. Leaving this blank skips the detection and removal of outliers.
-
 **Keep Essential Columns** (`keepessentials`): Logical, if TRUE, the output data contains only the following columns (but not all, depending on which settings above are used and preceding Apps in the Workflow): *temperature*, *heading*, *altitude*, *import_marked_outlier*, *index*, *hour*, *min*, *secs*, *hourmin*, *yearmonthday*, *timediff_hrs*, *kmph*, *dist_m*, *geometry (sf)*, *lon*, *lat*, *sunrise_timestamp*, *sunset_timestamp*, *timestamp_local*, *local_tz*, *acc_dt*.
 
 
@@ -89,6 +89,6 @@ Move2 location object
 
 ### Null or error handling
 
--   `[ID/Altitude/Temp/Heading] Column`: If any of these options are left blank, the respective column is not renamed. Instead, a `NA` column of the desired name is appended.
--   `[ID/Altitude/Temp/Heading] Column`: For any of these settings, if a column name is provided but isn't found in the input dataset, a warning is provided and a NA column of the desired name is appended.
--   `EPSG`: If no EPSG code is provided, defaults to EPSG:32733 (UTM zone 33S). If the input is an invalid EPSG, the App will throw an error.
+-   **ID/Altitude/Temperature/Heading Columns**: If any of these options are left blank, the respective column is not renamed. Instead, a `NA` column of the desired name is appended.
+-   **ID/Altitude/Temperature/Heading Columns**: For any of these settings, if a column name is provided but isn't found in the input dataset, a warning is provided and a NA column of the desired name is appended.
+-   **EPSG**: If no EPSG code is provided, defaults to EPSG:32733 (UTM zone 33S). If the input is an invalid EPSG, the App will throw an error.

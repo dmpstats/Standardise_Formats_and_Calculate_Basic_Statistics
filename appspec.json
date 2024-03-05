@@ -7,6 +7,13 @@
       "defaultValue": 0,
       "type": "INTEGER"
     },
+        {
+      "id": "outlier_thresh",
+      "name": "Upper threshold for movement speed (km/h)",
+      "description": "The highest acceptable speed between consecutive locations (units: km/h), for speed-based outlier detection. Any location with a leading speed (i.e. speed from last location) above this value will be removed as an outlier. Leave blank to skip outliers detection and removal step.",
+      "defaultValue": null,
+      "type": "DOUBLE"
+    },
     {
       "id": "bind_times",
       "name": "Bind additional timestamp columns",
@@ -76,13 +83,6 @@
       "description": "Identify the column name in the input data with heading direction values (if any), to be renamed as `heading`. Leaving this empty generates an empty `heading` column.",
       "defaultValue": "",
       "type": "STRING"
-    },
-    {
-      "id": "outlier_thresh",
-      "name": "Upper threshold for movement speed (km/h)",
-      "description": "The highest acceptable speed between consecutive locations (units: km/h), for speed-based outlier detection. Any location with a leading speed (i.e. speed from last location) above this value will be removed as an outlier. Leave blank to skip outliers detection and removal step.",
-      "defaultValue": null,
-      "type": "DOUBLE"
     },
     {
       "id": "keepessentials",
