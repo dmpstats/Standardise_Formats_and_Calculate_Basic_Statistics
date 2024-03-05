@@ -76,16 +76,16 @@ Move2 location object
 
 ### Most common errors
 
--   For any `column name` settings, please ensure that:
+-   For any column-renaming settings (e.g.`altitudecol`, `tempcol`, `headingcol`), please ensure that:
 
     1.  the named column is **contained within the input dataset**
     2.  the column name has been **spelled with complete accuracy**
 
     or an error will be returned and processing will stop. Check the logs for the list of column names in the input dataset.
 
--   Any `column` settings can be bugged by a column name with two (and, sometimes, one) periods: for example, 'altitude.col.xyz' could not be recognized. To solve this bug, any column containing a period must be duplicated (instead of renamed) with the new name `altitude/temperature/heading`.
+-   Any of the column-renaming settings can be bugged by a column name with two (and, sometimes, one) periods: for example, 'altitude.col.xyz' could not be recognized. To solve this bug, any column containing a period must be duplicated (instead of renamed) with the new name `altitude/temperature/heading`.
 
--   `Filter by Time Interval` must be numeric, expressing the number of minutes. If the provided interval is greater than 60, the data will be returned with a warning.
+-   **Filter by Time Interval** must be numeric, expressing the number of minutes. If the provided interval is greater than 60, the data will be returned with a warning.
 
 ### Null or error handling
 
