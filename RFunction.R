@@ -173,36 +173,6 @@ rFunction = function(data,
   }
   
   
-  # The following is deprecated until later changes
-  # Calling movebank study name requires a Movebank handle input
-  
-  # Add study name
-  # if(bind_study == TRUE) {
-  #   
-  #   if("study.id" %!in% colnames(mt_track_data(data)) & "study_id" %!in% colnames(mt_track_data(data))) {
-  #     logger.warn("study.id and study_id are not columns in the track data. Unable to bind study column")
-  #   } else {
-  #     
-  #     if("study.id" %in% colnames(mt_track_data(data))) {
-  #       study_id <- mt_track_data(data)$study.id
-  #     } else {
-  #       study_id <- mt_track_data(data)$study_id
-  #     }
-  #     
-  #     studyname <- movebank_download_study_info(id = study_id)$name
-  #     
-  #     # CC: I'll update this to work on >1 studies later
-  #     if(length(unique(study_id)) > 1) {
-  #       logger.warn("Input contains data from several studies. Study ID will not be appended.")
-  #     } else {
-  #       data %<>% mutate(study = rep(studyname, nrow(data)))
-  #       logger.info("Study column appended")
-  #     }
-  #     
-  #   }
-    
-  #}
-  
   # make sure "move2" is the first class
   data <- fix_mv2_class(data)
 
