@@ -60,28 +60,28 @@
       "id": "idcol",
       "name": "Name of 'primary animal identifier' column",
       "description": "Identify the column name in the input data to reset as primary identification. If no column is named, the default identifier column as used in Movebank remains the primary identifier.",
-      "defaultValue": "",
+      "defaultValue": null,
       "type": "STRING"
     },
     {
       "id": "altitudecol",
       "name": "Name of altitude column",
       "description": "Identify the column name in the input data with altitude values (if any), to be renamed as `altitude`. Leaving blank generates an empty `altitude` column. ",
-      "defaultValue": "",
+      "defaultValue": null,
       "type": "STRING"
     },
     {
       "id": "tempcol",
       "name": "Name of temperature column",
       "description": "Identify the column name in the input data with temperature values (if any), to be renamed as `temperature`. Leaving this empty generates an empty `temperature` column. ",
-      "defaultValue": "",
+      "defaultValue": null,
       "type": "STRING"
     },
     {
       "id": "headingcol",
       "name": "Name of heading column",
       "description": "Identify the column name in the input data with heading direction values (if any), to be renamed as `heading`. Leaving this empty generates an empty `heading` column.",
-      "defaultValue": "",
+      "defaultValue": null,
       "type": "STRING"
     },
     {

@@ -21,10 +21,10 @@ rFunction = function(data,
                      bind_kmph = TRUE,
                      createUTMs = TRUE,
                      EPSG = 32733,
-                     idcol = "", 
-                     altitudecol = "", 
-                     tempcol = "", 
-                     headingcol = "", 
+                     idcol = NULL, 
+                     altitudecol = NULL, 
+                     tempcol = NULL, 
+                     headingcol = NULL, 
                      keepessentials = TRUE,
                      outlier_thresh = NULL
                      ) {
@@ -51,7 +51,7 @@ rFunction = function(data,
       stop("Can't find the Coordinate Reference System for the provided `EPSG` code.", call. = FALSE)
     }
   }
-  
+
   
   logger.info("Buckle up... starting data processing")
   
@@ -107,15 +107,21 @@ rFunction = function(data,
   }
   
   # Generate optional columns --------------------------------------------------------
-
   
-  logger.trace(paste0("Provided column names are: \n idcol: ", idcol,
+  # For legacy purposes, overwrite empty-string as NULL, as the intended behaviour.
+  # `isTRUE` required to deal with NULLs inside the if condition
+  if(isTRUE(idcol == "")) idcol <- NULL
+  if(isTRUE(altitudecol == "")) altitudecol <- NULL
+  if(isTRUE(tempcol == "")) tempcol <- NULL
+  if(isTRUE(headingcol == "")) headingcol <- NULL
+  
+  logger.trace(paste0("Provided columns to rename are: ",
+                      "\n idcol: ", idcol,
                       "\n altitudecol: ", altitudecol,
                       "\n tempcol: ", tempcol, 
                       "\n headingcol: ", headingcol))
   logger.trace(paste0("Column names in the dataset are: \n", toString(colnames(data))))
   colheadings <- c(altitudecol, tempcol, idcol, headingcol)
-  colheadings <- colheadings[colheadings != ""] # remove empty inputs
   
   if(any(colheadings %!in% colnames(data))) {
     missing <- colheadings[which(colheadings %!in% colnames(data))]
@@ -125,30 +131,30 @@ rFunction = function(data,
   
 
   # Process altitude data
-  if(altitudecol == "") {
+  if(is.null(altitudecol)) {
     data %<>% dplyr::mutate(altitude = NA)
   } else {
     # If alt column in input is identified, rename as 'altitude'
-    data <- data |> 
-      dplyr::rename(altitude = dplyr::all_of(altitudecol)) |> 
+    data <- data |>
+      dplyr::rename(altitude = dplyr::all_of(altitudecol)) |>
       dplyr::mutate(altitude = as.numeric(altitude)) # remove units
   }
   
   
   # Process temperature data
-  if(tempcol == "") {
+  if(is.null(tempcol)) {
     data %<>% dplyr::mutate(temperature = NA)
   } else {
     # If temp col in input is identified, rename as 'temperature'
     data <- data |> 
       dplyr::rename(temperature = dplyr::all_of(tempcol)) |> 
       dplyr::mutate(temperature = as.numeric(temperature)) # remove units
-    
   }
   
   
+  
   # Process heading data
-  if(headingcol == "") {
+  if(is.null(headingcol)) {
     data %<>% dplyr::mutate(heading = NA)
   } else {
     # If heading col in input is identified, rename as 'heading'
@@ -159,7 +165,7 @@ rFunction = function(data,
   
   
   # Define trackID 
-  if(idcol != "") {
+  if(not_null(idcol)) {
     logger.info(paste0("Changing primary ID column to ", idcol))
     mt_track_data(data)
     data <- mt_set_track_id_column(data, idcol)
@@ -220,7 +226,7 @@ rFunction = function(data,
     )  
   
   
-
+  
   # Append UTM data --------------------------------------------------------------
   
 
@@ -288,8 +294,8 @@ rFunction = function(data,
                 mean_kmph = mean(SPEED2, na.rm = TRUE),
                 med_kmph = median(SPEED2, na.rm = TRUE),
                 max_gap_mins = max(TIMEDIFF2, na.rm = TRUE),
-                max_alt = ifelse(altitudecol != "", max(altitude, na.rm = TRUE), NA),
-                min_alt = ifelse(altitudecol != "", min(altitude, na.rm = TRUE), NA),
+                max_alt = ifelse(not_null(altitudecol) && sum(is.na(altitude)) == 0, max(altitude, na.rm = TRUE), NA),
+                min_alt = ifelse(not_null(altitudecol) && sum(is.na(altitude)) == 0, min(altitude, na.rm = TRUE), NA),
                 total_km = sum(DIST2, na.rm = TRUE) / 1000
       )
     
