@@ -141,6 +141,7 @@ rFunction = function(data,
   }
   
   
+  
   # Process temperature data
   if(is.null(tempcol)) {
     data %<>% dplyr::mutate(temperature = NA)
@@ -202,6 +203,10 @@ rFunction = function(data,
     
   #}
   
+  # make sure "move2" is the first class
+  data <- fix_mv2_class(data)
+
+
   # Add indexes -----------------------------------------------------------------
 
   logger.info("Binding indexes for each tag")
@@ -398,7 +403,7 @@ rFunction = function(data,
 
 
 
-
+# Helper Functions ====================================================================
 
 
 # //////////////////////////////////////////////////////////////////////////////
@@ -458,4 +463,34 @@ remove_outliers <- function(data, kmph_thresh){
   }
   
   return(data)
+}
+
+
+
+
+#' //////////////////////////////////////////////////////////////////////////////
+#' Check and fix order of classes of move2 object, where `"move2"` should come first
+#'
+#' Addressing issue when `dplyr::rename()` is applied to a move2 object, which
+#' returns an object with first class `"sf"`. This is because `dplyr::rename()`
+#' is a generic function for which there is no method for `move2` objects. Then
+#' it tries it again for the `sf` binding, under which `rename` as a specific
+#' method, therefore swapping the order of the classes (1st `"sf"`, 2nd
+#' `"move2"`). This caused problems further ahead, specifically when using the
+#' combination `data |> group_by() |> select()`, where `mt_is_move2(data) == '
+#' TRUE`, but `class(data) == c("sf, move2, ...)`: the returned object from the
+#' pipe loses the `"move2"` class and become a strict `sf` object, causing
+#' havoc!
+#' 
+#' This function forces a move2 object to have `"move2"` as the first class
+fix_mv2_class <- function(x){
+  
+  if(mt_is_move2(x)){
+    classes <- class(x)
+    mv2_pos <- which(classes == "move2")
+    if(mv2_pos != 1){
+     class(x) <- c(classes[mv2_pos], classes[-mv2_pos])
+    }
+  }
+  x
 }
