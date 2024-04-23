@@ -121,6 +121,7 @@ rFunction = function(data,
                       "\n tempcol: ", tempcol, 
                       "\n headingcol: ", headingcol))
   logger.trace(paste0("Column names in the dataset are: \n", toString(colnames(data))))
+  
   colheadings <- c(altitudecol, tempcol, idcol, headingcol)
   
   if(any(colheadings %!in% colnames(data))) {
@@ -129,53 +130,47 @@ rFunction = function(data,
     stop(paste0("One of the input column names is not present in this dataset. Please check input settings carefully. Missing column(s): ", toString(missing)))
   }
   
+  
+  #' Process altitude data 
+  data <- data |> col_renaming(
+    input_col = altitudecol, 
+    par_name = "altitudecol",
+    target_col_name = 'altitude', 
+    fallback_name = 'height_above_ellipsoid'
+  )
+  
+  #' Addressing special case of "raw height", which is stored as text in MoveBank
+  #' (http://vocab.nerc.ac.uk/collection/MVB/current/MVB000132/) Here forcing
+  #' conversion to numeric, but warnings likely arise due to presence of letter
+  #' characters. Also, unlike other height-based attributes, it's unit-less
+  if(isTRUE(altitudecol == "height_raw")){
+    data$altitude <- as.numeric(data$altitude)  
+  }
 
-  # Process altitude data
-  if(is.null(altitudecol)) {
-    data %<>% dplyr::mutate(altitude = NA)
-  } else {
-    # If alt column in input is identified, rename as 'altitude'
-    data <- data |>
-      dplyr::rename(altitude = dplyr::all_of(altitudecol)) |>
-      dplyr::mutate(altitude = as.numeric(altitude)) # remove units
-  }
-  
-  
-  
   # Process temperature data
-  if(is.null(tempcol)) {
-    data %<>% dplyr::mutate(temperature = NA)
-  } else {
-    # If temp col in input is identified, rename as 'temperature'
-    data <- data |> 
-      dplyr::rename(temperature = dplyr::all_of(tempcol)) |> 
-      dplyr::mutate(temperature = as.numeric(temperature)) # remove units
-  }
+  data <- data |> col_renaming(
+    input_col = tempcol, 
+    par_name = "tempcol",
+    target_col_name = 'temperature', 
+    fallback_name = 'eobs_temperature'
+  )
   
+
+  #' Process heading data
+  data <- data |> col_renaming(
+    input_col = headingcol, 
+    par_name = "headingcol",
+    target_col_name = 'heading', 
+    fallback_name = 'heading'
+  )
   
-  
-  # Process heading data
-  if(is.null(headingcol)) {
-    data %<>% dplyr::mutate(heading = NA)
-  } else {
-    # If heading col in input is identified, rename as 'heading'
-    data <- data |> 
-      dplyr::rename(heading = dplyr::all_of(headingcol)) |> 
-      dplyr::mutate(heading = as.numeric(heading)) # remove units
-    }
-  
-  
-  # Define trackID 
+  # re-define trackID 
   if(not_null(idcol)) {
     logger.info(paste0("Changing primary ID column to ", idcol))
     mt_track_data(data)
     data <- mt_set_track_id_column(data, idcol)
   }
   
-  
-  # make sure "move2" is the first class
-  data <- fix_mv2_class(data)
-
 
   # Add indexes -----------------------------------------------------------------
 
@@ -438,29 +433,79 @@ remove_outliers <- function(data, kmph_thresh){
 
 
 
-#' //////////////////////////////////////////////////////////////////////////////
-#' Check and fix order of classes of move2 object, where `"move2"` should come first
-#'
-#' Addressing issue when `dplyr::rename()` is applied to a move2 object, which
-#' returns an object with first class `"sf"`. This is because `dplyr::rename()`
-#' is a generic function for which there is no method for `move2` objects. Then
-#' it tries it again for the `sf` binding, under which `rename` as a specific
-#' method, therefore swapping the order of the classes (1st `"sf"`, 2nd
-#' `"move2"`). This caused problems further ahead, specifically when using the
-#' combination `data |> group_by() |> select()`, where `mt_is_move2(data) == '
-#' TRUE`, but `class(data) == c("sf, move2, ...)`: the returned object from the
-#' pipe loses the `"move2"` class and become a strict `sf` object, causing
-#' havoc!
+
+#' NOTE on column renaming of move2 objects (`data`): Here using base R
+#' instead of dplyr::rename(), as the latter changes the order of the classes
+#' attributes of the move2 object, which causes problems in future data
+#' manipulation steps.
 #' 
-#' This function forces a move2 object to have `"move2"` as the first class
-fix_mv2_class <- function(x){
+#' Why? `dplyr::rename()` is a generic fct for which there is no method for
+#' `move2` objects. Subsequently, it tries the next available class, `"sf"`,
+#' under which `rename` has a specific method. This leads to a returned move2
+#' object with "sf" as the 1st class (and `"move2"` as the 2nd). Experience
+#' problems occurred with the combination `data |> group_by() |> select()`, where
+#' `mt_is_move2(data) == TRUE`, but `class(data) == c("sf, move2, ...)`: the
+#' returned object from the pipe loses the `"move2"` class and become a strict
+#' `sf` object, causing havoc!
+col_renaming <- function(data, input_col, par_name, target_col_name, fallback_name){
   
-  if(mt_is_move2(x)){
-    classes <- class(x)
-    mv2_pos <- which(classes == "move2")
-    if(mv2_pos != 1){
-     class(x) <- c(classes[mv2_pos], classes[-mv2_pos])
+  if(is.null(input_col)){
+    
+    if(fallback_name %in% names(data)){
+      logger.warn(msg_fallback_col(par_name, fallback_name, target_col_name))
+      names(data)[names(data) == fallback_name] <- target_col_name
+    } else{
+      logger.info(msg_empty_col(par_name, fallback_name, target_col_name))
+      data[[target_col_name]] <- NA
+    }
+  } else{
+    if(isTRUE(input_col == target_col_name)){
+      logger.info(paste0("Column '", target_col_name, "' is already present in data - no renaming required."))
+    }else{
+      if(target_col_name %in% names(data)){
+        adapted_name <- paste0(target_col_name, '_orig')
+        logger.warn(msg_prexisting_col(target_col_name, adapted_name))
+        names(data)[names(data) == target_col_name] <- adapted_name
+      }
+      
+      logger.info(paste0("Renaming '", input_col, "' column as '", target_col_name, "'."))
+      names(data)[names(data) == input_col] <- target_col_name  
     }
   }
-  x
+  data
+}
+
+
+
+
+#' helpers for generating logger messages
+msg_prexisting_col <- function(old_name, new_name){
+  paste0(
+    "Target column name '", old_name, "' is already present in the input data. Column names must ",
+    "be unique, therefore renaming existing '", old_name, "' column as '", new_name, "'."
+  )
+}
+
+
+msg_fallback_col <- function(par_col, fallback_col, target_col){
+  
+  if(fallback_col == target_col){
+    paste0(
+      "Parameter `", par_col, "` specified as NULL, but fallback column '", fallback_col, 
+      "' found in data. No column renaming performed"
+    )
+  }else{
+    paste0(
+      "Parameter `", par_col, "` specified as NULL, but fallback column '", fallback_col, 
+      "' found in data. Renaming column '", fallback_col, "' as '", target_col, "'."
+    )
+  }
+}
+
+
+msg_empty_col <- function(par_col, fallback_col, target_col){
+  paste0(
+    "Parameter `", par_col, "` specified as `NULL` and no fallback column '", fallback_col, "' found in data. ",
+    "Generating an empty '", target_col, "' column."
+  )
 }
