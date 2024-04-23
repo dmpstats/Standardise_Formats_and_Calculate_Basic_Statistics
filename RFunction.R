@@ -326,6 +326,8 @@ rFunction = function(data,
   
   essentialcols <- c(mt_track_id_column(data), 
                      mt_time_column(data), 
+                     "event_id",
+                     "event.id",
                      "temperature", 
                      "heading", 
                      "altitude", 
