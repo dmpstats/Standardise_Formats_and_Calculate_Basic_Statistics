@@ -264,8 +264,8 @@ rFunction = function(data,
                 mean_kmph = mean(SPEED2, na.rm = TRUE),
                 med_kmph = median(SPEED2, na.rm = TRUE),
                 max_gap_mins = max(TIMEDIFF2, na.rm = TRUE),
-                max_alt = ifelse(not_null(altitudecol) && sum(is.na(altitude)) == 0, max(altitude, na.rm = TRUE), NA),
-                min_alt = ifelse(not_null(altitudecol) && sum(is.na(altitude)) == 0, min(altitude, na.rm = TRUE), NA),
+                max_alt = ifelse(not_null(altitudecol), max(altitude, na.rm = TRUE), NA),
+                min_alt = ifelse(not_null(altitudecol), min(altitude, na.rm = TRUE), NA),
                 total_km = sum(DIST2, na.rm = TRUE) / 1000
       )
     
