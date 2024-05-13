@@ -66,14 +66,14 @@
     {
       "id": "altitudecol",
       "name": "Name of altitude column",
-      "description": "Identify the column name in the input data with altitude values (if any), to be renamed as `altitude`. Leaving blank generates an empty `altitude` column. ",
+      "description": "Identify the column name in the input data with altitude values (if any), to be renamed as `altitude`. When `NULL` (default), code checks presence of fallback column `height_above_ellipsoid`, renaming it as 'altitude'. Otherwise, an empty `altitude` column is generated.",
       "defaultValue": null,
       "type": "STRING"
     },
     {
       "id": "tempcol",
       "name": "Name of temperature column",
-      "description": "Identify the column name in the input data with temperature values (if any), to be renamed as `temperature`. Leaving this empty generates an empty `temperature` column. ",
+      "description": "Identify the column name in the input data with temperature values (if any), to be renamed as `temperature`. When `NULL` (default), code checks presence of fallback column `eobs_temperature` in the input data, renaming it as `temperature`, otherwise an empty `temperature` column is generated.",
       "defaultValue": null,
       "type": "STRING"
     },

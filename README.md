@@ -64,11 +64,12 @@ Move2 location object
 
 **ID Column** (`idcol`): Character string, the name of the column in the input data to reset as primary identification. If no column is named, the default identifier column defined within Movebank (or alternative data source) remains the primary identifier.
 
-**Altitude Column** (`altitudecol`): Character string, the name of the column in the input data with altitude values (if any), to be renamed as `altitude`. Leaving this empty generates an empty `altitude` column. 
+**Altitude Column** (`altitudecol`): Character string, the name of the column in the input data with altitude values (if any), to be renamed as `altitude`. When `NULL` (default), code checks presence of fallback column `height_above_ellipsoid`, renaming it as `altitude`, otherwise, an empty `altitude` column is generated.
 
-**Temperature Column** (`tempcol`): Character string, the name of the column in the input data with temperature values (if any), to be renamed as `temperature`. Leaving this empty generates an empty `temperature` column. 
 
-**Heading Column** (`headingcol`): Character string, the name of the column in the input data with heading direction values (if any), to be renamed as `heading`. Leaving this empty generates an empty `heading` column. 
+**Temperature Column** (`tempcol`): Character string, the name of the column in the input data with temperature values (if any), to be renamed as `temperature`. When `NULL` (default), code checks presence of fallback column `eobs_temperature` in the input data, renaming it as `temperature`, otherwise an empty `temperature` column is generated. 
+
+**Heading Column** (`headingcol`): Character string, the name of the column in the input data with heading direction values (if any), to be renamed as `heading`. Leaving this empty generates an empty `heading` column if input does not contain a column of the same name. 
 
 **Keep Essential Columns** (`keepessentials`): Logical, if TRUE, the output data contains only the following columns (but not all, depending on which settings above are used and preceding Apps in the Workflow): *temperature*, *heading*, *altitude*, *import_marked_outlier*, *index*, *hour*, *min*, *secs*, *hourmin*, *yearmonthday*, *timediff_hrs*, *kmph*, *dist_m*, *geometry (sf)*, *lon*, *lat*, *sunrise_timestamp*, *sunset_timestamp*, *timestamp_local*, *local_tz*, *acc_dt*.
 
