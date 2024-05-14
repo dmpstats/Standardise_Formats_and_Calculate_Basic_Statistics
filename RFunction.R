@@ -55,6 +55,13 @@ rFunction = function(data,
   
   logger.info("Buckle up... starting data processing")
   
+  
+  # Ordering data by time within track ID --------------------------------------------------
+  
+  data <- data |> 
+    dplyr::arrange(mt_track_id(data), mt_time(data))
+  
+  
   # Filter to predefined intervals --------------------------------------------------
   
   if(timefilter != 0) {
