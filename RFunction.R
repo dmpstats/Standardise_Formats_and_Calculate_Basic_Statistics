@@ -75,7 +75,7 @@ rFunction = function(data,
   if (not_null(outlier_thresh)){
     logger.info("Detecting and removing potential outliers...")
     #units(outlier_thresh) <- units::as_units("km/h")
-    data <- data |>  remove_outliers(kmph_thresh = outlier_thresh)
+    data <- data |> remove_outliers(kmph_thresh = outlier_thresh)
   }
   
   
@@ -126,8 +126,8 @@ rFunction = function(data,
   
   if(any(colheadings %!in% colnames(data))) {
     missing <- colheadings[which(colheadings %!in% colnames(data))]
-    logger.fatal(paste0("One of the input column names is not present in this dataset. Please check input settings carefully. Missing column(s): ", toString(missing)))
-    stop(paste0("One of the input column names is not present in this dataset. Please check input settings carefully. Missing column(s): ", toString(missing)))
+    logger.fatal(paste0("One of the specified input column names is not present in this dataset. Please check input settings carefully. Misspecified column(s): ", toString(missing)))
+    stop(paste0("One of the specified input column names is not present in this dataset. Please check input settings carefully. Misspecified column(s): ", toString(missing)))
   }
   
   
