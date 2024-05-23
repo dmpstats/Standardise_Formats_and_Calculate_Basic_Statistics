@@ -52,24 +52,24 @@ Move2 location object
 
 **Bind additional timestamp columns** (`bind_times`): Logical, determines whether to append specific timestamp data (*hour,* *minute,* *second,* *hourmin,* and *yearmonthday*) to the output. Default: `TRUE`.
 
-**Bind time difference** (`bind_timediff`): Logical, determines whether to append a column with *time difference* between consecutive locations, each element giving the time lag to the next location (units: hours). Default: `TRUE`.
+**Bind time difference column** (`bind_timediff`): Logical, determines whether to append a column with *time difference* between consecutive locations, each element giving the time lag to the next location (units: hours). Default: `TRUE`.
 
-**Bind distance** (`bind_dist`): Logical, determines whether to append a column with the *distance travelled* between consecutive locations, each element giving the distance to the next location (units: metres). Default: `TRUE`.
+**Bind distance traveled column** (`bind_dist`): Logical, determines whether to append a column with the *distance travelled* between consecutive locations, each element giving the distance to the next location (units: metres). Default: `TRUE`.
 
-**Bind speed** (`bind_kmph`): Logical, determines whether to append a column with the *travelling speed* between consecutive locations, each element giving the speed to the next location (units: km/h). Default: `TRUE`
+**Bind speed column** (`bind_kmph`): Logical, determines whether to append a column with the *travelling speed* between consecutive locations, each element giving the speed to the next location (units: km/h). Default: `TRUE`
 
 **Bind UTM location data** (`createUTMs`): Logical, determines whether to generate and append Universal Transverse Mercator (UTM) data to the output. If TRUE, the primary geometry will become UTM data. NOTE: This will also remove points without any attached geometry. Default: `TRUE`.
 
-**EPSG** (`EPSG`): Integer, if *Bind UTM location data* is selected, a valid EPSG code for the transformed coordinate system. Defaults to EPSG:32733 (UTM zone 33S).
+**EPSG code for UTM coordinates** (`EPSG`): Integer, if *Bind UTM location data* is selected, a valid EPSG code for the transformed coordinate system. Defaults to EPSG:32733 (UTM zone 33S).
 
-**ID Column** (`idcol`): Character string, the name of the column in the input data to reset as primary identification. If no column is named, the default identifier column defined within Movebank (or alternative data source) remains the primary identifier.
+**Track ID column** (`idcol`): Character string, Identify the column name in the event or the track tables of the input move2 data to reset as the primary identifier for tracks/animals/tags. If no column is specified (`NULL`, default), the original primary identifier will remain unchanged.
 
-**Altitude Column** (`altitudecol`): Character string, the name of the column in the input data with altitude values (if any), to be renamed as `altitude`. When `NULL` (default), code checks presence of fallback column `height_above_ellipsoid`, renaming it as `altitude`, otherwise, an empty `altitude` column is generated.
+**Altitude column** (`altitudecol`): Character string, the name of the column in the input data with altitude values (if any), to be renamed as `altitude`. When `NULL` (default), code checks presence of fallback column `height_above_ellipsoid`, renaming it as `altitude`, otherwise, an empty `altitude` column is generated.
 
 
-**Temperature Column** (`tempcol`): Character string, the name of the column in the input data with temperature values (if any), to be renamed as `temperature`. When `NULL` (default), code checks presence of fallback column `eobs_temperature` in the input data, renaming it as `temperature`, otherwise an empty `temperature` column is generated. 
+**Temperature column** (`tempcol`): Character string, the name of the column in the input data with temperature values (if any), to be renamed as `temperature`. When `NULL` (default), code checks presence of fallback column `eobs_temperature` in the input data, renaming it as `temperature`, otherwise an empty `temperature` column is generated. 
 
-**Heading Column** (`headingcol`): Character string, the name of the column in the input data with heading direction values (if any), to be renamed as `heading`. Leaving this empty generates an empty `heading` column if input does not contain a column of the same name. 
+**"Heading column** (`headingcol`): Character string, the name of the column in the input data with heading direction values (if any), to be renamed as `heading`. Leaving this empty generates an empty `heading` column if input does not contain a column of the same name. 
 
 **Keep Essential Columns** (`keepessentials`): Logical, if TRUE, the output data contains only the following columns (but not all, depending on which settings above are used and preceding Apps in the Workflow): *temperature*, *heading*, *altitude*, *import_marked_outlier*, *index*, *hour*, *min*, *secs*, *hourmin*, *yearmonthday*, *timediff_hrs*, *kmph*, *dist_m*, *geometry (sf)*, *lon*, *lat*, *sunrise_timestamp*, *sunset_timestamp*, *timestamp_local*, *local_tz*, *acc_dt*.
 
