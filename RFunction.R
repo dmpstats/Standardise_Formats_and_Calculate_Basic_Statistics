@@ -53,10 +53,46 @@ rFunction = function(data,
   }
 
   
-  logger.info("Buckle up... starting data processing")
+  logger.info("Buckle up... starting data processing!")
   
   
-  # Ordering data by time within track ID --------------------------------------------------
+  # Re-define track ID based on user specification --------------------------------
+  
+  if(isTRUE(idcol == "")) idcol <- NULL
+  
+  if(not_null(idcol)) {
+    
+    # Colnames in both event and track data components
+    all_names <- c(names(mt_track_data(data)), names(data))
+    
+    if(idcol %!in% all_names){
+      msg <- paste0(
+        "Can't find column named '", idcol, "' in neither the event nor the track ",
+        "components of the input move2 data object. Please specify a valid name ",
+        "for 'Track ID column' (`idcol`)."
+      )
+      logger.fatal(msg)
+      stop(msg, call. = FALSE)
+    }else{
+      logger.info(paste0("Changing primary ID column to ", idcol))
+      
+      # keep the old track id colname
+      old_trk_id <- mt_track_id_column(data)
+      
+      # Set new track ID column
+      data <- data |> 
+        mt_set_track_id(idcol) |> 
+        relocate(all_of(idcol), .before = 1) 
+      
+      # include old track ID column in track component, if dimensions permit
+      if(length(unique(data[[old_trk_id]])) <= mt_n_tracks(data)){
+        data <- mt_as_track_attribute(data, all_of(old_trk_id))
+      }
+    }
+  }
+  
+  
+  # Ordering data by time within track ID --------------------------------------
   
   data <- data |> 
     dplyr::arrange(mt_track_id(data), mt_time(data))
@@ -117,27 +153,24 @@ rFunction = function(data,
   
   # For legacy purposes, overwrite empty-string as NULL, as the intended behaviour.
   # `isTRUE` required to deal with NULLs inside the if condition
-  if(isTRUE(idcol == "")) idcol <- NULL
   if(isTRUE(altitudecol == "")) altitudecol <- NULL
   if(isTRUE(tempcol == "")) tempcol <- NULL
   if(isTRUE(headingcol == "")) headingcol <- NULL
   
   logger.trace(paste0("Provided columns to rename are: ",
-                      "\n idcol: ", idcol,
                       "\n altitudecol: ", altitudecol,
                       "\n tempcol: ", tempcol, 
                       "\n headingcol: ", headingcol))
   logger.trace(paste0("Column names in the dataset are: \n", toString(colnames(data))))
   
-  colheadings <- c(altitudecol, tempcol, idcol, headingcol)
+  colheadings <- c(altitudecol, tempcol, headingcol)
   
   if(any(colheadings %!in% colnames(data))) {
     missing <- colheadings[which(colheadings %!in% colnames(data))]
     logger.fatal(paste0("One of the specified input column names is not present in this dataset. Please check input settings carefully. Misspecified column(s): ", toString(missing)))
     stop(paste0("One of the specified input column names is not present in this dataset. Please check input settings carefully. Misspecified column(s): ", toString(missing)))
   }
-  
-  
+
   #' Process altitude data 
   data <- data |> col_renaming(
     input_col = altitudecol, 
@@ -171,13 +204,8 @@ rFunction = function(data,
     fallback_name = 'heading'
   )
   
-  # re-define trackID 
-  if(not_null(idcol)) {
-    logger.info(paste0("Changing primary ID column to ", idcol))
-    mt_track_data(data)
-    data <- mt_set_track_id_column(data, idcol)
-  }
   
+
 
   # Add indexes -----------------------------------------------------------------
 

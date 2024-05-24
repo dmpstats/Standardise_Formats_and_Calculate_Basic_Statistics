@@ -51,35 +51,35 @@
     },
     {
       "id": "EPSG",
-      "name": "Provide EPSG code for UTM coordinates",
-      "description": "If *Bind UTM location data* is selected, please provide a valid EPSG code for the transformed coordinate system. Defaults to EPSG:32733 (UTM zone 33S)",
+      "name": "EPSG code for UTM coordinates",
+      "description": "If *Bind UTM location data* is selected, please provide a valid EPSG code for the transformed coordinate system. Defaults to EPSG:32733 (UTM zone 33S).",
       "defaultValue": 32733,
       "type": "INTEGER"
     },
     {
       "id": "idcol",
-      "name": "Name of 'primary animal identifier' column",
-      "description": "Identify the column name in the input data to reset as primary identification. If no column is named, the default identifier column as used in Movebank remains the primary identifier.",
+      "name": "Track ID column",
+      "description": "Identify the column name in the event or the track tables of the input move2 data to reset as the primary identifier for tracks/animals/tags. If no column is specified (default), the original primary identifier will remain unchanged.",
       "defaultValue": null,
       "type": "STRING"
     },
     {
       "id": "altitudecol",
-      "name": "Name of altitude column",
+      "name": "Altitude column",
       "description": "Identify the column name in the input data with altitude values (if any), to be renamed as `altitude`. When `NULL` (default), code checks presence of fallback column `height_above_ellipsoid`, renaming it as 'altitude'. Otherwise, an empty `altitude` column is generated.",
       "defaultValue": null,
       "type": "STRING"
     },
     {
       "id": "tempcol",
-      "name": "Name of temperature column",
+      "name": "Temperature column",
       "description": "Identify the column name in the input data with temperature values (if any), to be renamed as `temperature`. When `NULL` (default), code checks presence of fallback column `eobs_temperature` in the input data, renaming it as `temperature`, otherwise an empty `temperature` column is generated.",
       "defaultValue": null,
       "type": "STRING"
     },
     {
       "id": "headingcol",
-      "name": "Name of heading column",
+      "name": "Heading column",
       "description": "Identify the column name in the input data with heading direction values (if any), to be renamed as `heading`. Leaving this empty generates an empty `heading` column.",
       "defaultValue": null,
       "type": "STRING"

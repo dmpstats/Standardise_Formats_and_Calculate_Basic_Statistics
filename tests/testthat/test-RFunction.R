@@ -1,10 +1,10 @@
 library(units)
 library(sf)
+library(readr)
+library(testthat)
 
-input3 <- test_data("input3.rds")
-input2 <- test_data("input2.rds")
-
-
+input3 <- read_rds(test_path("data/input3.rds"))
+input2 <- read_rds(test_path("data/input2.rds"))
 
 
 test_that("output is a move2 object", {
@@ -182,10 +182,6 @@ test_that("column renaming works as expected", {
 
 
   
-
-
-
-
 test_that("alternative EPSGs can still be handled", {
   
   actual <- rFunction(
@@ -276,5 +272,41 @@ test_that("App throws error if specified EPSG code is non-valid", {
     regexp = "Can't find the Coordinate Reference System for the provided `EPSG` code"
   )
   
+})
+
+
+
+
+test_that("Changing column for track ID works", {
+  
+  # NULL (default) does nothing, i.e. previous track ID column remains the same
+  expect_equal(
+    rFunction(data = input2, idcol = NULL) |> 
+      mt_track_id_column(),
+    "track"
+  )
+  
+  # column from track component - 3 classes
+  actual <- rFunction(data = input2, idcol = "deployment.id") 
+  expect_equal(mt_track_id_column(actual), "deployment.id")
+  expect_contains(names(mt_track_data(actual)), "track")
+  expect_equal(mt_n_tracks(actual), 3)
+  
+  # column from track component - 1 class, i.e. track data flattened with list columns
+  actual <- rFunction(data = input2, idcol = "study.id") 
+  expect_equal(mt_track_id_column(actual), "study.id")
+  expect_equal(mt_n_tracks(actual), 1)
+  
+  # column from event component - 5 classes
+  actual <- rFunction(data = input3, idcol = "tag.local.identifier") 
+  expect_equal(mt_track_id_column(actual), "tag.local.identifier")
+  expect_contains(names(mt_track_data(actual)), "track")
+  expect_equal(mt_n_tracks(actual), 5)
+  
+  # nonexistent column name
+  expect_error(
+    rFunction(data = input2, idcol = "THIS_IS_NONSENSE"), 
+    regexp = "Can't find column named 'THIS_IS_NONSENSE' in neither the event nor"
+  )
 })
 
