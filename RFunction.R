@@ -74,19 +74,30 @@ rFunction = function(data,
       logger.fatal(msg)
       stop(msg, call. = FALSE)
     }else{
-      logger.info(paste0("Changing primary ID column to ", idcol))
       
-      # keep the old track id colname
+      # get original old track id colname
       old_trk_id <- mt_track_id_column(data)
       
-      # Set new track ID column
-      data <- data |> 
-        mt_set_track_id(idcol) |> 
-        relocate(all_of(idcol), .before = 1) 
-      
-      # include old track ID column in track component, if dimensions permit
-      if(length(unique(data[[old_trk_id]])) <= mt_n_tracks(data)){
-        data <- mt_as_track_attribute(data, all_of(old_trk_id))
+      if(old_trk_id == idcol){
+        
+        logger.info(paste0(
+          "'", idcol, "' already defined as the track ID column in the input ",
+          " data - no changes required.")
+        )
+        
+      }else{
+        
+        logger.info(paste0("Changing primary track ID column to ", idcol))
+        
+        # Set new track ID column
+        data <- data |> 
+          mt_set_track_id(idcol) |> 
+          relocate(all_of(idcol), .before = 1) 
+        
+        # include old track ID column in track component, if dimensions permit
+        if(length(unique(data[[old_trk_id]])) <= mt_n_tracks(data)){
+          data <- mt_as_track_attribute(data, all_of(old_trk_id))
+        } 
       }
     }
   }

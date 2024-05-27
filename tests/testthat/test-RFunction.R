@@ -308,5 +308,10 @@ test_that("Changing column for track ID works", {
     rFunction(data = input2, idcol = "THIS_IS_NONSENSE"), 
     regexp = "Can't find column named 'THIS_IS_NONSENSE' in neither the event nor"
   )
+  
+  # Nothing happens if specified ID the same as the original in input data
+  actual <- rFunction(data = input2, idcol = "track")
+  expect_equal(mt_track_id_column(actual), "track")
+  
 })
 
